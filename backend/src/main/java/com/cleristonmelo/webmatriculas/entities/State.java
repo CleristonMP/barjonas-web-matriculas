@@ -2,27 +2,33 @@ package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tb_county")
-public class County implements Serializable {
+@Table(name = "tb_state")
+public class State implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	private String state;
+	
+	@OneToMany(mappedBy = "state", fetch = FetchType.EAGER)
+	private Set<City> cities = new HashSet<>();
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -30,13 +36,12 @@ public class County implements Serializable {
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 	
-	public County() {
+	public State() {
 	}
 
-	public County(Long id, String name, String state) {
+	public State(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.state = state;
 	}
 
 	public Long getId() {
@@ -55,12 +60,8 @@ public class County implements Serializable {
 		this.name = name;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
+	public Set<City> getCities() {
+		return cities;
 	}
 
 	public Instant getCreatedAt() {
@@ -94,7 +95,7 @@ public class County implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		County other = (County) obj;
+		State other = (State) obj;
 		return Objects.equals(id, other.id);
 	}
 }

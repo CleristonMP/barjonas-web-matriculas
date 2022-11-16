@@ -12,10 +12,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
 @Entity
 @Table(name = "tb_parent")
@@ -27,11 +31,13 @@ public class Parent implements Serializable {
 	private Long id;
 	private String name;
 	private String lastName;
-	private String cpf;
-	private String phone;
 	
 	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
-	private Set<Student> students = new HashSet<>();
+	private Set<Phone> phones = new HashSet<>();
+	
+	@ManyToOne
+	@JoinColumn(name = "student_id")
+	private Student student;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -42,12 +48,11 @@ public class Parent implements Serializable {
 	public Parent() {
 	}
 
-	public Parent(Long id, String name, String lastName, String cpf, String phone) {
+	public Parent(Long id, String name, String lastName, Student student) {
 		this.id = id;
 		this.name = name;
 		this.lastName = lastName;
-		this.cpf = cpf;
-		this.phone = phone;
+		this.student = student;
 	}
 
 	public Long getId() {
@@ -74,24 +79,16 @@ public class Parent implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getCpf() {
-		return cpf;
+	public Student getStudent() {
+		return student;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public Set<Student> getStudents() {
-		return students;
+	public Set<Phone> getPhones() {
+		return phones;
 	}
 
 	public Instant getCreatedAt() {

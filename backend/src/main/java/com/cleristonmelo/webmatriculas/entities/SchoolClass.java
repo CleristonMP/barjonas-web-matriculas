@@ -6,15 +6,21 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import com.cleristonmelo.webmatriculas.entities.enums.Period;
+import com.cleristonmelo.webmatriculas.entities.weak.Phase;
 
 @Entity
 @Table(name = "tb_school_class")
@@ -25,9 +31,12 @@ public class SchoolClass implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	private String period;
+	private Period period;
 	
-	@OneToMany(mappedBy = "schoolClass")
+	@OneToOne(mappedBy = "schoolClass", cascade = CascadeType.ALL)
+	private Phase phase;
+	
+	@OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
 	private Set<Student> students = new HashSet<>();
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
@@ -39,10 +48,11 @@ public class SchoolClass implements Serializable {
 	public SchoolClass() {
 	}
 
-	public SchoolClass(Long id, String name, String period) {
+	public SchoolClass(Long id, String name, Period period, Phase phase) {
 		this.id = id;
 		this.name = name;
 		this.period = period;
+		this.phase = phase;
 	}
 
 	public Long getId() {
@@ -61,12 +71,20 @@ public class SchoolClass implements Serializable {
 		this.name = name;
 	}
 
-	public String getPeriod() {
+	public Period getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(String period) {
+	public void setPeriod(Period period) {
 		this.period = period;
+	}
+
+	public Phase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(Phase phase) {
+		this.phase = phase;
 	}
 
 	public Set<Student> getStudents() {

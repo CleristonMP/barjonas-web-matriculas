@@ -1,79 +1,87 @@
 package com.cleristonmelo.webmatriculas.dtos;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Size;
-
+import com.cleristonmelo.webmatriculas.entities.Address;
+import com.cleristonmelo.webmatriculas.entities.Parent;
+import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.cleristonmelo.webmatriculas.entities.custom_types.Birthplace;
+import com.cleristonmelo.webmatriculas.entities.custom_types.NationalId;
+import com.cleristonmelo.webmatriculas.entities.enums.Gender;
+import com.cleristonmelo.webmatriculas.entities.enums.Race;
 
 public class StudentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	private Long id;
 
-	@NotNull(message = "Campo requerido")
 	private Integer enrollment;
-
-	@Size(min = 3, max = 15, message = "O nome do aluno deve ter entre 3 e 15 caracteres")
-	@NotBlank(message = "Campo requerido")
 	private String name;
-
-	@Size(min = 3, max = 15, message = "O sobrenome do aluno deve ter entre 3 e 15 caracteres")
-	@NotBlank(message = "Campo requerido")
 	private String lastName;
-	private String cpf;
-
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT")
-	@PastOrPresent(message = "A data de nascimento não pode ser futura")
-	private Date birthDate;
-
-	private Long addressId;
-
-	private Long schoolClassId;
-
-	private Long parentId;
-
+	private Gender gender;
+	private Birthplace birthPlace;
+	private Boolean socialAssistance;
+	private Race race;
+	private String disability;
+	
+	private String socialId;
+	private NationalId nationalId;
+	private String email;
+	
+	private LocalDate birthDate;
+	
+	private Address address;
+	
+	private SchoolClass schoolClass;
+	
+	private Set<ParentDTO> parents = new HashSet<>();
+	
 	public StudentDTO() {
 	}
-
-	public StudentDTO(Long id, Integer enrollment, String name, String lastName, String cpf, Date birthDate, Long addressId,
-			Long schoolClassId, Long parentId) {
-		this.id = id;
+	
+	public StudentDTO(Integer enrollment, String name, String lastName, String socialId, Gender gender,
+			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
+			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
 		this.name = name;
 		this.lastName = lastName;
-		this.cpf = cpf;
+		this.socialId = socialId;
+		this.gender = gender;
+		this.birthPlace = birthPlace;
+		this.socialAssistance = socialAssistance;
+		this.race = race;
+		this.disability = disability;
+		this.nationalId = nationalId;
+		this.email = email;
 		this.birthDate = birthDate;
-		this.addressId = addressId;
-		this.schoolClassId = schoolClassId;
-		this.parentId = parentId;
+		this.address = address;
+		this.schoolClass = schoolClass;
 	}
-
+	
 	public StudentDTO(Student entity) {
-		this.id = entity.getId();
 		this.enrollment = entity.getEnrollment();
 		this.name = entity.getName();
 		this.lastName = entity.getLastName();
-		this.cpf = entity.getCpf();
+		this.socialId = entity.getSocialId();
+		this.gender = entity.getGender();
+		this.birthPlace = entity.getBirthPlace();
+		this.socialAssistance = entity.getSocialAssistance();
+		this.race = entity.getRace();
+		this.disability = entity.getDisability();
+		this.nationalId = entity.getNationalId();
+		this.email = entity.getEmail();
 		this.birthDate = entity.getBirthDate();
-		this.addressId = entity.getAddress().getId();
-		this.schoolClassId = entity.getSchoolClass().getId();
-		this.parentId = entity.getParent().getId();
+		this.address = entity.getAddress();
+		this.schoolClass = entity.getSchoolClass();
 	}
-
-	public Long getId() {
-		return id;
+	
+	public StudentDTO(Student entity, Set<Parent> parents) {
+		this(entity);
+		parents.forEach(parent -> this.parents.add(new ParentDTO(parent)));
 	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+	
 	public Integer getEnrollment() {
 		return enrollment;
 	}
@@ -98,43 +106,95 @@ public class StudentDTO implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getCpf() {
-		return cpf;
+	public String getSocialId() {
+		return socialId;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setSocialId(String socialId) {
+		this.socialId = socialId;
 	}
 
-	public Date getBirthDate() {
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public Birthplace getBirthPlace() {
+		return birthPlace;
+	}
+
+	public void setBirthPlace(Birthplace birthPlace) {
+		this.birthPlace = birthPlace;
+	}
+
+	public Boolean getSocialAssistance() {
+		return socialAssistance;
+	}
+
+	public void setSocialAssistance(Boolean socialAssistance) {
+		this.socialAssistance = socialAssistance;
+	}
+
+	public Race getRace() {
+		return race;
+	}
+
+	public void setRace(Race race) {
+		this.race = race;
+	}
+
+	public String getDisability() {
+		return disability;
+	}
+
+	public void setDisability(String disability) {
+		this.disability = disability;
+	}
+
+	public NationalId getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(NationalId nationalId) {
+		this.nationalId = nationalId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(Date birthDate) {
+	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
 
-	public Long getAddressId() {
-		return addressId;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setAddressId(Long addressId) {
-		this.addressId = addressId;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
-	public Long getSchoolClassId() {
-		return schoolClassId;
+	public SchoolClass getSchoolClass() {
+		return schoolClass;
 	}
 
-	public void setSchoolClassId(Long schoolClassId) {
-		this.schoolClassId = schoolClassId;
+	public void setSchoolClass(SchoolClass schoolClass) {
+		this.schoolClass = schoolClass;
 	}
 
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
+	public Set<ParentDTO> getParents() {
+		return parents;
 	}
 }

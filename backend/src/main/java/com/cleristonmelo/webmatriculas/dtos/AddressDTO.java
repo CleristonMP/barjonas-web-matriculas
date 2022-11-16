@@ -1,60 +1,46 @@
 package com.cleristonmelo.webmatriculas.dtos;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.validation.constraints.NotBlank;
-
-import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.Address;
+import com.cleristonmelo.webmatriculas.entities.City;
+import com.cleristonmelo.webmatriculas.entities.Student;
 
 public class AddressDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
 	private Long id;
-
-	@NotBlank(message = "Campo obrigatório")
-	private String publicPlace;
-
+	private Integer zipCode;
+	private String district;
 	private String number;
 	private String complement;
-	private String zipCode;
-
-	@NotBlank(message = "Campo obrigatório")
-	private String district;
-
-	private Long countyId;
-
-	private Set<StudentDTO> students = new HashSet<>();
-
+	
+	private City city;
+	
+	private Student student;
+	
 	public AddressDTO() {
 	}
 
-	public AddressDTO(Long id, String publicPlace, String number, String complement, String zipCode, String district,
-			Long countyId) {
+	public AddressDTO(Long id, Integer zipCode, String district, String number, String complement, City city,
+			Student student) {
 		this.id = id;
-		this.publicPlace = publicPlace;
-		this.number = number;
-		this.complement = complement;
 		this.zipCode = zipCode;
 		this.district = district;
-		this.setCountyId(countyId);
+		this.number = number;
+		this.complement = complement;
+		this.city = city;
+		this.student = student;
 	}
-
+	
 	public AddressDTO(Address entity) {
 		this.id = entity.getId();
-		this.publicPlace = entity.getPublicPlace();
-		this.number = entity.getNumber();
-		this.complement = entity.getComplement();
 		this.zipCode = entity.getZipCode();
 		this.district = entity.getDistrict();
-		this.countyId = entity.getCounty().getId();
-	}
-
-	public AddressDTO(Address entity, Set<Student> alunos) {
-		this(entity);
-		alunos.forEach(student -> this.students.add(new StudentDTO(student)));
+		this.number = entity.getNumber();
+		this.complement = entity.getComplement();
+		this.city = entity.getCity();
+		this.student = entity.getStudent();
 	}
 
 	public Long getId() {
@@ -65,12 +51,20 @@ public class AddressDTO implements Serializable {
 		this.id = id;
 	}
 
-	public String getPublicPlace() {
-		return publicPlace;
+	public Integer getZipCode() {
+		return zipCode;
 	}
 
-	public void setPublicPlace(String publicPlace) {
-		this.publicPlace = publicPlace;
+	public void setZipCode(Integer zipCode) {
+		this.zipCode = zipCode;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
 	}
 
 	public String getNumber() {
@@ -89,31 +83,19 @@ public class AddressDTO implements Serializable {
 		this.complement = complement;
 	}
 
-	public String getZipCode() {
-		return zipCode;
+	public City getCity() {
+		return city;
 	}
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
+	public void setCity(City city) {
+		this.city = city;
 	}
 
-	public String getDistrict() {
-		return district;
+	public Student getStudent() {
+		return student;
 	}
 
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-
-	public Long getCountyId() {
-		return countyId;
-	}
-
-	public void setCountyId(Long countyId) {
-		this.countyId = countyId;
-	}
-
-	public Set<StudentDTO> getStudents() {
-		return students;
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 }

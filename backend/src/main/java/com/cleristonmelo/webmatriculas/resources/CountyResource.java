@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.cleristonmelo.webmatriculas.dtos.CountyDTO;
+import com.cleristonmelo.webmatriculas.dtos.CityDTO;
 import com.cleristonmelo.webmatriculas.services.CountyService;
 
 @RestController
@@ -27,19 +27,19 @@ public class CountyResource {
 	private CountyService service;
 	
 	@GetMapping
-	public ResponseEntity<Page<CountyDTO>> findAll(Pageable pageable) {
-		Page<CountyDTO> page = service.findAllPaged(pageable);
+	public ResponseEntity<Page<CityDTO>> findAll(Pageable pageable) {
+		Page<CityDTO> page = service.findAllPaged(pageable);
 		return ResponseEntity.ok().body(page);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<CountyDTO> findById(@PathVariable Long id){
-		CountyDTO dto = service.findById(id);	
+	public ResponseEntity<CityDTO> findById(@PathVariable Long id){
+		CityDTO dto = service.findById(id);	
 		return ResponseEntity.ok().body(dto);
 	}
 	
 	@PostMapping
-	public ResponseEntity<CountyDTO> insert(@RequestBody CountyDTO dto){
+	public ResponseEntity<CityDTO> insert(@RequestBody CityDTO dto){
 		dto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(dto.getId()).toUri();		
@@ -47,7 +47,7 @@ public class CountyResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<CountyDTO> update(@PathVariable Long id, @RequestBody CountyDTO dto) {
+	public ResponseEntity<CityDTO> update(@PathVariable Long id, @RequestBody CityDTO dto) {
 		dto = service.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}

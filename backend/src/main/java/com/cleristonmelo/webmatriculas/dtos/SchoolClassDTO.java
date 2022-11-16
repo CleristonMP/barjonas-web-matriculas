@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 
 import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.entities.enums.Period;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 
 public class SchoolClassDTO implements Serializable {
@@ -18,14 +19,14 @@ public class SchoolClassDTO implements Serializable {
 	private String name;
 	
 	@NotBlank(message = "Campo obrigatório")
-	private String period;
+	private Period period;
 
 	private Set<StudentDTO> students = new HashSet<>();
 	
 	public SchoolClassDTO() {
 	}
 
-	public SchoolClassDTO(Long id, String name, String period) {
+	public SchoolClassDTO(Long id, String name, Period period) {
 		this.id = id;
 		this.name = name;
 		this.period = period;
@@ -58,11 +59,11 @@ public class SchoolClassDTO implements Serializable {
 		this.name = name;
 	}
 
-	public String getPeriod() {
+	public Period getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(String period) {
+	public void setPeriod(Period period) {
 		this.period = period;
 	}
 

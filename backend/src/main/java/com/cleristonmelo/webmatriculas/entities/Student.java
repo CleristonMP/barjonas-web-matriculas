@@ -2,47 +2,62 @@ package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import com.cleristonmelo.webmatriculas.entities.custom_types.Birthplace;
+import com.cleristonmelo.webmatriculas.entities.custom_types.NationalId;
+import com.cleristonmelo.webmatriculas.entities.enums.Gender;
+import com.cleristonmelo.webmatriculas.entities.enums.Race;
 
 @Entity
-@Table(name = "tb_student")
+@Table(name = "tb_student", uniqueConstraints = @UniqueConstraint(columnNames = {"socialId", "nationalId", "email"}))
 public class Student implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	private Integer enrollment;
 	private String name;
 	private String lastName;
-	private String cpf;
+	private Gender gender;
+	private Birthplace birthPlace;
+	private Boolean socialAssistance;
+	private Race race;
+	private String disability;
+	
+	private String socialId;
+	private NationalId nationalId;
+	private String email;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Date birthDate;
+	private LocalDate birthDate;
 	
-	@ManyToOne
-	@JoinColumn(name = "address_id")
+	@OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_id", referencedColumnName = "id")
 	private Address address;
 	
 	@ManyToOne
 	@JoinColumn(name = "school_class_id")
 	private SchoolClass schoolClass;
 	
-	@ManyToOne
-	@JoinColumn(name = "parent_id")
-	private Parent parent;
+	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+	private Set<Parent> parents = new HashSet<>();
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -52,28 +67,26 @@ public class Student implements Serializable {
 	
 	public Student() {
 	}
-
-	public Student(Long id, Integer enrollment, String name, String lastName, String cpf, Date birthDate, Address address,
-			SchoolClass schoolClass, Parent parent) {
-		this.id = id;
+	
+	public Student(Integer enrollment, String name, String lastName, String socialId, Gender gender,
+			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
+			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
 		this.name = name;
 		this.lastName = lastName;
-		this.cpf = cpf;
+		this.socialId = socialId;
+		this.gender = gender;
+		this.birthPlace = birthPlace;
+		this.socialAssistance = socialAssistance;
+		this.race = race;
+		this.disability = disability;
+		this.nationalId = nationalId;
+		this.email = email;
 		this.birthDate = birthDate;
 		this.address = address;
 		this.schoolClass = schoolClass;
-		this.parent = parent;
 	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
+	
 	public Integer getEnrollment() {
 		return enrollment;
 	}
@@ -98,19 +111,75 @@ public class Student implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getCpf() {
-		return cpf;
+	public String getSocialId() {
+		return socialId;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setSocialId(String socialId) {
+		this.socialId = socialId;
 	}
 
-	public Date getBirthDate() {
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public Birthplace getBirthPlace() {
+		return birthPlace;
+	}
+
+	public void setBirthPlace(Birthplace birthPlace) {
+		this.birthPlace = birthPlace;
+	}
+
+	public Boolean getSocialAssistance() {
+		return socialAssistance;
+	}
+
+	public void setSocialAssistance(Boolean socialAssistance) {
+		this.socialAssistance = socialAssistance;
+	}
+
+	public Race getRace() {
+		return race;
+	}
+
+	public void setRace(Race race) {
+		this.race = race;
+	}
+
+	public String getDisability() {
+		return disability;
+	}
+
+	public void setDisability(String disability) {
+		this.disability = disability;
+	}
+
+	public NationalId getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(NationalId nationalId) {
+		this.nationalId = nationalId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(Date birthDate) {
+	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
 
@@ -130,12 +199,8 @@ public class Student implements Serializable {
 		this.schoolClass = schoolClass;
 	}
 
-	public Parent getParent() {
-		return parent;
-	}
-
-	public void setParent(Parent parent) {
-		this.parent = parent;
+	public Set<Parent> getParents() {
+		return parents;
 	}
 
 	public Instant getCreatedAt() {

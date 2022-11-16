@@ -2,39 +2,39 @@ package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tb_address")
-public class Address implements Serializable {
+@Table(name = "tb_city")
+public class City implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Integer zipCode;
-	private String district;
-	private String number;
-	private String complement;
+	private String name;
 	
 	@ManyToOne
-	@JoinColumn(name = "city_id")
-	private City city;
+	@JoinColumn(name = "state_id")
+	private State state;
 	
-	@OneToOne(mappedBy = "address")
-	private Student student;
+	@OneToMany(mappedBy = "city", fetch = FetchType.EAGER)
+	private Set<Address> addresses = new HashSet<>();
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -42,18 +42,13 @@ public class Address implements Serializable {
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 	
-	public Address() {
+	public City() {
 	}
 
-	public Address(Long id, Integer zipCode, String district, String number, String complement, City city,
-			Student student) {
+	public City(Long id, String name, State state) {
 		this.id = id;
-		this.zipCode = zipCode;
-		this.district = district;
-		this.number = number;
-		this.complement = complement;
-		this.city = city;
-		this.student = student;
+		this.name = name;
+		this.state = state;
 	}
 
 	public Long getId() {
@@ -64,52 +59,24 @@ public class Address implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getZipCode() {
-		return zipCode;
+	public String getName() {
+		return name;
 	}
 
-	public void setZipCode(Integer zipCode) {
-		this.zipCode = zipCode;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getDistrict() {
-		return district;
+	public State getState() {
+		return state;
 	}
 
-	public void setDistrict(String district) {
-		this.district = district;
+	public void setState(State state) {
+		this.state = state;
 	}
 
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
-
-	public String getComplement() {
-		return complement;
-	}
-
-	public void setComplement(String complement) {
-		this.complement = complement;
-	}
-
-	public City getCity() {
-		return city;
-	}
-
-	public void setCity(City city) {
-		this.city = city;
-	}
-
-	public Student getStudent() {
-		return student;
-	}
-
-	public void setStudent(Student student) {
-		this.student = student;
+	public Set<Address> getAddresses() {
+		return addresses;
 	}
 
 	public Instant getCreatedAt() {
@@ -143,7 +110,7 @@ public class Address implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Address other = (Address) obj;
+		City other = (City) obj;
 		return Objects.equals(id, other.id);
 	}
 }

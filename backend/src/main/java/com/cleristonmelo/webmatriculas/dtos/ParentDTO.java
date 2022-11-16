@@ -7,52 +7,48 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Parent;
+import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
 public class ParentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
-	@Size(min = 3, max = 15, message = "O nome do responsável deve ter entre 3 e 15 caracteres")
+	@Size(min = 3, max = 50, message = "O nome do pai ou da mãe deve ter entre 3 e 50 caracteres")
 	@NotBlank(message = "Campo requerido")
 	private String name;
 	
-	@Size(min = 3, max = 15, message = "O sobrenome do responsável deve ter entre 3 e 15 caracteres")
+	@Size(min = 3, max = 50, message = "O sobrenome do pai ou da mãe deve ter entre 3 e 50 caracteres")
 	@NotBlank(message = "Campo requerido")
 	private String lastName;
 	
-	@NotBlank(message = "Campo obrigatório")
-	private String cpf;
+	private Set<PhoneDTO> phones = new HashSet<>();
 	
-	@NotBlank(message = "Campo obrigatório")
-	private String phone;
-
-	private Set<StudentDTO> students = new HashSet<>();
+	private Student student;
 	
 	public ParentDTO() {
 	}
 
-	public ParentDTO(Long id, String name, String lastName, String cpf, String phone) {
+	public ParentDTO(Long id, String name, String lastName, Student student) {
 		this.id = id;
 		this.name = name;
 		this.lastName = lastName;
-		this.cpf = cpf;
-		this.phone = phone;
+		this.student = student;
 	}
 	
 	public ParentDTO(Parent entity) {
 		this.id = entity.getId();
 		this.name = entity.getName();
 		this.lastName = entity.getLastName();
-		this.cpf = entity.getCpf();
-		this.phone = entity.getPhone();
+		this.student = entity.getStudent();
 	}
 	
-	public ParentDTO(Parent entity, Set<Student> students) {
+	public ParentDTO(Parent entity, Set<Phone> phones) {
 		this(entity);
-		students.forEach(student -> this.students.add(new StudentDTO(student)));
+		phones.forEach(phone -> this.phones.add(new PhoneDTO(phone)));
 	}
 
 	public Long getId() {
@@ -67,7 +63,7 @@ public class ParentDTO implements Serializable {
 		return name;
 	}
 
-	public void setNome(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -75,27 +71,19 @@ public class ParentDTO implements Serializable {
 		return lastName;
 	}
 
-	public void setSobrenome(String lastName) {
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	public String getCpf() {
-		return cpf;
+	public Student getStudent() {
+		return student;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setTelefone(String phone) {
-		this.phone = phone;
-	}
-
-	public Set<StudentDTO> getStudents() {
-		return students;
+	public Set<PhoneDTO> getPhones() {
+		return phones;
 	}
 }
