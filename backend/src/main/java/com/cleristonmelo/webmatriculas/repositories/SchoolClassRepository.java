@@ -11,7 +11,6 @@ import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 @Repository
 public interface SchoolClassRepository extends JpaRepository<SchoolClass, Long> {
 
-	@Query("SELECT obj FROM SchoolClass obj WHERE (LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%'))"
-			+ " OR LOWER(obj.period) LIKE LOWER(CONCAT('%',:name,'%')))")
+	@Query("SELECT obj FROM SchoolClass obj WHERE (LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%')))")
 	Page<SchoolClass> find(Pageable pageable, String name);
 }

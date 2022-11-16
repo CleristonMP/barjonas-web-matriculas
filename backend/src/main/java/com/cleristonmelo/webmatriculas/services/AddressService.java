@@ -7,18 +7,14 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
 import com.cleristonmelo.webmatriculas.dtos.AddressDTO;
-import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.Address;
-import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.repositories.AddressRepository;
-import com.cleristonmelo.webmatriculas.repositories.CountyRepository;
+import com.cleristonmelo.webmatriculas.repositories.CityRepository;
+import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
 
@@ -32,19 +28,13 @@ public class AddressService {
 	private StudentRepository studentRepository;
 	
 	@Autowired
-	private CountyRepository countyRepository;
-	
-	@Transactional(readOnly = true)
-	public Page<AddressDTO> findAllPaged(Pageable pageable) {
-		Page<Address> page = repository.findAll(pageable);
-		return page.map(x -> new AddressDTO(x));
-	}
+	private CityRepository cityRepository;
 	
 	@Transactional(readOnly = true)
 	public AddressDTO findById(Long id) {
 		Optional<Address> obj = repository.findById(id);
 		Address entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-		return new AddressDTO(entity, entity.getStudents());
+		return new AddressDTO(entity);
 	}
 	
 	@Transactional
@@ -81,18 +71,11 @@ public class AddressService {
 	}
 
 	private void copyDtoToEntity(AddressDTO dto, Address entity) {
-		entity.setPublicPlace(dto.getPublicPlace());
-		entity.setNumber(dto.getNumber());
-		entity.setComplement(dto.getComplement());
 		entity.setZipCode(dto.getZipCode());
 		entity.setDistrict(dto.getDistrict());
-		
-		entity.setCounty(countyRepository.getOne(dto.getCountyId()));
-		
-		entity.getStudents().clear();
-		for (StudentDTO aluDto : dto.getStudents()) {
-			Student student = studentRepository.getOne(aluDto.getId());
-			entity.getStudents().add(student);
-		}
+		entity.setNumber(dto.getNumber());
+		entity.setComplement(dto.getComplement());
+		entity.setCity(cityRepository.getOne(dto.getCity().getId()));
+		entity.setStudent(studentRepository.getOne(dto.getStudent().getEnrollment()));
 	}	
 }

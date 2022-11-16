@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cleristonmelo.webmatriculas.dtos.CityDTO;
-import com.cleristonmelo.webmatriculas.services.CountyService;
+import com.cleristonmelo.webmatriculas.services.CityService;
 
 @RestController
 @RequestMapping(value = "/counties")
 public class CountyResource {
 	
 	@Autowired
-	private CountyService service;
+	private CityService service;
 	
 	@GetMapping
 	public ResponseEntity<Page<CityDTO>> findAll(Pageable pageable) {

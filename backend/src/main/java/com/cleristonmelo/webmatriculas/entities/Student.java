@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,18 +34,21 @@ public class Student implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	private Integer enrollment;
+	private Long enrollment;
 	private String name;
 	private String lastName;
-	private Gender gender;
 	private Birthplace birthPlace;
 	private Boolean socialAssistance;
-	private Race race;
 	private String disability;
-	
-	private String socialId;
+	private Integer socialId;
 	private NationalId nationalId;
 	private String email;
+
+	@Enumerated(EnumType.STRING)
+	private Race race;
+
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private LocalDate birthDate;
@@ -68,7 +73,7 @@ public class Student implements Serializable {
 	public Student() {
 	}
 	
-	public Student(Integer enrollment, String name, String lastName, String socialId, Gender gender,
+	public Student(Long enrollment, String name, String lastName, Integer socialId, Gender gender,
 			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
 			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
@@ -87,11 +92,11 @@ public class Student implements Serializable {
 		this.schoolClass = schoolClass;
 	}
 	
-	public Integer getEnrollment() {
+	public Long getEnrollment() {
 		return enrollment;
 	}
 
-	public void setEnrollment(Integer enrollment) {
+	public void setEnrollment(Long enrollment) {
 		this.enrollment = enrollment;
 	}
 
@@ -111,11 +116,11 @@ public class Student implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getSocialId() {
+	public Integer getSocialId() {
 		return socialId;
 	}
 
-	public void setSocialId(String socialId) {
+	public void setSocialId(Integer socialId) {
 		this.socialId = socialId;
 	}
 

@@ -14,15 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cleristonmelo.webmatriculas.dtos.CityDTO;
 import com.cleristonmelo.webmatriculas.entities.City;
-import com.cleristonmelo.webmatriculas.repositories.CountyRepository;
+import com.cleristonmelo.webmatriculas.repositories.CityRepository;
+import com.cleristonmelo.webmatriculas.repositories.StateRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class CountyService {
+public class CityService {
 	
 	@Autowired
-	private CountyRepository repository;
+	private CityRepository repository;
+	
+	@Autowired
+	private StateRepository stateRepository;
 	
 	@Transactional(readOnly = true)
 	public Page<CityDTO> findAllPaged(Pageable pageable) {
@@ -42,7 +46,7 @@ public class CountyService {
 		City entity = new City();
 		
 		entity.setName(dto.getName());
-		entity.setState(dto.getState());
+		entity.setState(stateRepository.getOne(dto.getState().getId()));
 		
 		entity = repository.save(entity);
 		return new CityDTO(entity);

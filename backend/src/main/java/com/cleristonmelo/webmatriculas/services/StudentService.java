@@ -12,12 +12,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cleristonmelo.webmatriculas.dtos.ParentDTO;
 import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
+import com.cleristonmelo.webmatriculas.entities.Parent;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
+import com.cleristonmelo.webmatriculas.entities.custom_types.NationalId;
 import com.cleristonmelo.webmatriculas.repositories.AddressRepository;
 import com.cleristonmelo.webmatriculas.repositories.ParentRepository;
 import com.cleristonmelo.webmatriculas.repositories.SchoolClassRepository;
+import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
 
@@ -83,13 +86,25 @@ public class StudentService {
 	}
 	
 	private void copyDtoToEntity(StudentDTO dto, Student entity) {
-		entity.setEnrollment(dto.getEnrollment());
+		
 		entity.setName(dto.getName());
 		entity.setLastName(dto.getLastName());
-		entity.setCpf(dto.getCpf());
+		entity.setBirthPlace(dto.getBirthPlace());
+		entity.setSocialAssistance(dto.getSocialAssistance());
+		entity.setDisability(dto.getDisability());
+		entity.setSocialId(dto.getSocialId());
+		entity.setNationalId(new NationalId(dto.getNationalId()));
+		entity.setEmail(dto.getEmail());
+		entity.setRace(dto.getRace());
+		entity.setGender(dto.getGender());
 		entity.setBirthDate(dto.getBirthDate());
-		entity.setAddress(addressRepository.getOne(dto.getAddressId()));
-		entity.setSchoolClass(schoolClassRepository.getOne(dto.getSchoolClassId()));
-		entity.setParent(parentRepository.getOne(dto.getParentId()));
+		entity.setAddress(addressRepository.getOne(dto.getAddress().getId()));
+		entity.setSchoolClass(schoolClassRepository.getOne(dto.getSchoolClass().getId()));
+		
+		entity.getParents().clear();
+		for (ParentDTO parDto : dto.getParents()) {
+			Parent parent = parentRepository.getOne(parDto.getId());
+			entity.getParents().add(parent);
+		}
 	}
 }

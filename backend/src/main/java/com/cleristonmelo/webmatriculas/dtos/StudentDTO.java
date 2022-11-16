@@ -17,7 +17,7 @@ import com.cleristonmelo.webmatriculas.entities.enums.Race;
 public class StudentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private Integer enrollment;
+	private Long enrollment;
 	private String name;
 	private String lastName;
 	private Gender gender;
@@ -26,7 +26,7 @@ public class StudentDTO implements Serializable {
 	private Race race;
 	private String disability;
 	
-	private String socialId;
+	private Integer socialId;
 	private NationalId nationalId;
 	private String email;
 	
@@ -41,7 +41,7 @@ public class StudentDTO implements Serializable {
 	public StudentDTO() {
 	}
 	
-	public StudentDTO(Integer enrollment, String name, String lastName, String socialId, Gender gender,
+	public StudentDTO(Long enrollment, String name, String lastName, Integer socialId, Gender gender,
 			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
 			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
@@ -82,11 +82,11 @@ public class StudentDTO implements Serializable {
 		parents.forEach(parent -> this.parents.add(new ParentDTO(parent)));
 	}
 	
-	public Integer getEnrollment() {
+	public Long getEnrollment() {
 		return enrollment;
 	}
 
-	public void setEnrollment(Integer enrollment) {
+	public void setEnrollment(Long enrollment) {
 		this.enrollment = enrollment;
 	}
 
@@ -106,11 +106,11 @@ public class StudentDTO implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getSocialId() {
+	public Integer getSocialId() {
 		return socialId;
 	}
 
-	public void setSocialId(String socialId) {
+	public void setSocialId(Integer socialId) {
 		this.socialId = socialId;
 	}
 

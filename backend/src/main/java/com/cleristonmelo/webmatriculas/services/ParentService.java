@@ -7,16 +7,13 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
 import com.cleristonmelo.webmatriculas.dtos.ParentDTO;
-import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Parent;
-import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
+import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 import com.cleristonmelo.webmatriculas.repositories.ParentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
@@ -27,20 +24,11 @@ public class ParentService {
 	@Autowired
 	private ParentRepository repository;
 	
-	@Autowired
-	private StudentRepository studentRepository;
-	
-	@Transactional(readOnly = true)
-	public Page<ParentDTO> findAllPaged(Pageable pageable) {
-		Page<Parent> page = repository.findAll(pageable);
-		return page.map(x -> new ParentDTO(x));
-	}
-	
 	@Transactional(readOnly = true)
 	public ParentDTO findById(Long id) {
 		Optional<Parent> obj = repository.findById(id);
 		Parent entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-		return new ParentDTO(entity, entity.getStudents());
+		return new ParentDTO(entity, entity.getPhones());
 	}
 	
 	@Transactional
@@ -79,13 +67,13 @@ public class ParentService {
 	private void copyDtoToEntity(ParentDTO dto, Parent entity) {
 		entity.setName(dto.getName());
 		entity.setLastName(dto.getLastName());
-		entity.setCpf(dto.getCpf());
-		entity.setPhone(dto.getPhone());
 		
-		entity.getStudents().clear();
-		for (StudentDTO aluDto : dto.getStudents()) {
-			Student student = studentRepository.getOne(aluDto.getId());
-			entity.getStudents().add(student);
+		entity.getPhones().clear();
+		for (PhoneDTO phoneDto : dto.getPhones()) {
+			Phone phone = new Phone();
+			phone.setNumber(phoneDto.getNumber());
+			phone.setParent(repository.getOne(phoneDto.getParentId()));
+			entity.getPhones().add(phone);
 		}
 	}	
 }

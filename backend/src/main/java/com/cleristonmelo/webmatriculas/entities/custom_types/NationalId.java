@@ -15,11 +15,17 @@ public class NationalId implements Serializable {
 	}
 
 	public NationalId(Integer number, String issuingEntity, String state, String city) {
-		super();
 		this.number = number;
 		this.issuingEntity = issuingEntity;
 		this.state = state;
 		this.city = city;
+	}
+	
+	public NationalId(NationalId entity) {
+		this.number = entity.getNumber();
+		this.issuingEntity = entity.getIssuingEntity();
+		this.state = entity.getState();
+		this.city = entity.getCity();
 	}
 
 	public Integer getNumber() {
