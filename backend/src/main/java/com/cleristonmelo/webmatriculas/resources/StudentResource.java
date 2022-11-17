@@ -37,29 +37,29 @@ public class StudentResource {
 		return ResponseEntity.ok().body(page);
 	}
 	
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<StudentDTO> findById(@PathVariable Long id){
-		StudentDTO dto = service.findById(id);	
+	@GetMapping(value = "/{enrollment}")
+	public ResponseEntity<StudentDTO> findByEnrollment(@PathVariable Long enrollment){
+		StudentDTO dto = service.findByEnrollment(enrollment);	
 		return ResponseEntity.ok().body(dto);
 	}
 	
 	@PostMapping
 	public ResponseEntity<StudentDTO> insert(@Valid @RequestBody StudentDTO dto){
 		dto = service.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{enrollment}")
 				.buildAndExpand(dto.getEnrollment()).toUri();		
 		return ResponseEntity.created(uri).body(dto);
 	}
 	
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<StudentDTO> update(@PathVariable Long id, @Valid @RequestBody StudentDTO dto) {
-		dto = service.update(id, dto);
+	@PutMapping(value = "/{enrollment}")
+	public ResponseEntity<StudentDTO> update(@PathVariable Long enrollment, @Valid @RequestBody StudentDTO dto) {
+		dto = service.update(enrollment, dto);
 		return ResponseEntity.ok().body(dto);
 	}
 	
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		service.delete(id);
+	@DeleteMapping(value = "/{enrollment}")
+	public ResponseEntity<Void> delete(@PathVariable Long enrollment) {
+		service.delete(enrollment);
 		return ResponseEntity.noContent().build();
 	}
 }

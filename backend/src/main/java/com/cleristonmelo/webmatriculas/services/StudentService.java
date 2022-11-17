@@ -46,8 +46,8 @@ public class StudentService {
 	}
 	
 	@Transactional(readOnly = true)
-	public StudentDTO findById(Long id) {
-		Optional<Student> obj = repository.findById(id);
+	public StudentDTO findByEnrollment(Long enrollment) {
+		Optional<Student> obj = repository.findById(enrollment);
 		Student entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 		return new StudentDTO(entity);
 	}
@@ -61,24 +61,24 @@ public class StudentService {
 	}
 
 	@Transactional
-	public StudentDTO update(Long id, StudentDTO dto) {
+	public StudentDTO update(Long enrollment, StudentDTO dto) {
 		try {
-			Student entity = repository.getOne(id);
+			Student entity = repository.getOne(enrollment);
 			copyDtoToEntity(dto, entity);
 			entity = repository.save(entity);
 			return new StudentDTO(entity);
 		}
 		catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
+			throw new ResourceNotFoundException("Id not found " + enrollment);
 		}
 	}
 
-	public void delete(Long id) {
+	public void delete(Long enrollment) {
 		try {
-			repository.deleteById(id);
+			repository.deleteById(enrollment);
 		}
 		catch (EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
+			throw new ResourceNotFoundException("Id not found " + enrollment);
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
@@ -86,7 +86,6 @@ public class StudentService {
 	}
 	
 	private void copyDtoToEntity(StudentDTO dto, Student entity) {
-		
 		entity.setName(dto.getName());
 		entity.setLastName(dto.getLastName());
 		entity.setBirthPlace(dto.getBirthPlace());

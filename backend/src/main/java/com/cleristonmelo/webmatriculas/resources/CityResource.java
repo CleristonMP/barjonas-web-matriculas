@@ -20,8 +20,8 @@ import com.cleristonmelo.webmatriculas.dtos.CityDTO;
 import com.cleristonmelo.webmatriculas.services.CityService;
 
 @RestController
-@RequestMapping(value = "/counties")
-public class CountyResource {
+@RequestMapping(value = "/cities")
+public class CityResource {
 	
 	@Autowired
 	private CityService service;

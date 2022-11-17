@@ -5,8 +5,6 @@ import java.net.URI;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +25,6 @@ public class AddressResource {
 	
 	@Autowired
 	private AddressService service;
-	
-	@GetMapping
-	public ResponseEntity<Page<AddressDTO>> findAll(Pageable pageable) {
-		Page<AddressDTO> page = service.findAllPaged(pageable);
-		return ResponseEntity.ok().body(page);
-	}
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<AddressDTO> findById(@PathVariable Long id){
