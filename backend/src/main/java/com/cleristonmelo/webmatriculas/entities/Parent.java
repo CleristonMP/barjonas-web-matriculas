@@ -2,24 +2,16 @@ package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-
-import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
 @Entity
 @Table(name = "tb_parent")
@@ -32,13 +24,6 @@ public class Parent implements Serializable {
 	private String name;
 	private String lastName;
 	
-	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
-	private Set<Phone> phones = new HashSet<>();
-	
-	@ManyToOne
-	@JoinColumn(name = "student_id")
-	private Student student;
-	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
 
@@ -48,11 +33,10 @@ public class Parent implements Serializable {
 	public Parent() {
 	}
 
-	public Parent(Long id, String name, String lastName, Student student) {
+	public Parent(Long id, String name, String lastName) {
 		this.id = id;
 		this.name = name;
 		this.lastName = lastName;
-		this.student = student;
 	}
 
 	public Long getId() {
@@ -77,18 +61,6 @@ public class Parent implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public Student getStudent() {
-		return student;
-	}
-
-	public void setStudent(Student student) {
-		this.student = student;
-	}
-
-	public Set<Phone> getPhones() {
-		return phones;
 	}
 
 	public Instant getCreatedAt() {

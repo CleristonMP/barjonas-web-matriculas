@@ -11,10 +11,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
@@ -23,6 +23,7 @@ import javax.persistence.Table;
 
 import com.cleristonmelo.webmatriculas.entities.enums.Period;
 import com.cleristonmelo.webmatriculas.entities.weak.Phase;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_school_class")
@@ -37,15 +38,18 @@ public class SchoolClass implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Period period;
 	
-	@OneToOne(mappedBy = "schoolClass", cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "phase_id", referencedColumnName = "id")
 	private Phase phase;
 	
-	@OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "schoolClass")
 	private Set<Student> students = new HashSet<>();
 	
+	@JsonIgnore
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
 
+	@JsonIgnore
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 	
@@ -91,6 +95,7 @@ public class SchoolClass implements Serializable {
 		this.phase = phase;
 	}
 
+	@JsonIgnore
 	public Set<Student> getStudents() {
 		return students;
 	}

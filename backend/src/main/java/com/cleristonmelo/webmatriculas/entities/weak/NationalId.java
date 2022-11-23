@@ -1,38 +1,48 @@
-package com.cleristonmelo.webmatriculas.entities.custom_types;
+package com.cleristonmelo.webmatriculas.entities.weak;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.cleristonmelo.webmatriculas.entities.Student;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "tb_national_id")
 public class NationalId implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private Integer number;
+	@Id	
+	private Long number;
 	private String issuingEntity;
 	private String state;
 	private String city;
 	
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "student_id")
+	private Student student;
+	
 	public NationalId() {
 	}
 
-	public NationalId(Integer number, String issuingEntity, String state, String city) {
+	public NationalId(Long number, String issuingEntity, String state, String city) {
 		this.number = number;
 		this.issuingEntity = issuingEntity;
 		this.state = state;
 		this.city = city;
 	}
-	
-	public NationalId(NationalId entity) {
-		this.number = entity.getNumber();
-		this.issuingEntity = entity.getIssuingEntity();
-		this.state = entity.getState();
-		this.city = entity.getCity();
-	}
 
-	public Integer getNumber() {
+	public Long getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(Long number) {
 		this.number = number;
 	}
 
@@ -60,6 +70,14 @@ public class NationalId implements Serializable {
 		this.city = city;
 	}
 	
+	public Student getStudent() {
+		return student;
+	}
+
+	public void setStudent(Student student) {
+		this.student = student;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(number);

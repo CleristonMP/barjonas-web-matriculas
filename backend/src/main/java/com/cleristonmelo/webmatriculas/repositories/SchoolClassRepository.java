@@ -13,4 +13,7 @@ public interface SchoolClassRepository extends JpaRepository<SchoolClass, Long> 
 
 	@Query("SELECT obj FROM SchoolClass obj WHERE (LOWER(obj.name) LIKE LOWER(CONCAT('%',:name,'%')))")
 	Page<SchoolClass> find(Pageable pageable, String name);
+	
+	@Query("SELECT obj FROM SchoolClass obj JOIN FETCH obj.students")
+	SchoolClass findSchoolClassWithStudents(SchoolClass schoolClass);
 }

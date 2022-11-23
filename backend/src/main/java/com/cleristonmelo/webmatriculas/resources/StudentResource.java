@@ -33,7 +33,9 @@ public class StudentResource {
 	public ResponseEntity<Page<StudentDTO>> findAll(Pageable pageable,
 			@RequestParam(value = "schoolClassId", defaultValue = "") Long schoolClassId,
 			@RequestParam(value = "name", defaultValue = "") String name) {
-		Page<StudentDTO> page = service.findAllPaged(pageable, schoolClassId, name);
+		
+		Page<StudentDTO> page = service.findAllPaged(pageable, schoolClassId, name.trim());
+		
 		return ResponseEntity.ok().body(page);
 	}
 	

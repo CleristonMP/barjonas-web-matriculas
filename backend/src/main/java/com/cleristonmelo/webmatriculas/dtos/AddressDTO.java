@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.cleristonmelo.webmatriculas.entities.Address;
 import com.cleristonmelo.webmatriculas.entities.City;
-import com.cleristonmelo.webmatriculas.entities.Student;
 
 public class AddressDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -17,20 +16,16 @@ public class AddressDTO implements Serializable {
 	
 	private City city;
 	
-	private Student student;
-	
 	public AddressDTO() {
 	}
 
-	public AddressDTO(Long id, Integer zipCode, String district, String number, String complement, City city,
-			Student student) {
+	public AddressDTO(Long id, Integer zipCode, String district, String number, String complement, City city) {
 		this.id = id;
 		this.zipCode = zipCode;
 		this.district = district;
 		this.number = number;
 		this.complement = complement;
 		this.city = city;
-		this.student = student;
 	}
 	
 	public AddressDTO(Address entity) {
@@ -40,7 +35,6 @@ public class AddressDTO implements Serializable {
 		this.number = entity.getNumber();
 		this.complement = entity.getComplement();
 		this.city = entity.getCity();
-		this.student = entity.getStudent();
 	}
 
 	public Long getId() {
@@ -89,13 +83,5 @@ public class AddressDTO implements Serializable {
 
 	public void setCity(City city) {
 		this.city = city;
-	}
-
-	public Student getStudent() {
-		return student;
-	}
-
-	public void setStudent(Student student) {
-		this.student = student;
 	}
 }

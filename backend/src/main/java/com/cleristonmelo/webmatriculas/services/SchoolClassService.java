@@ -12,12 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
 import com.cleristonmelo.webmatriculas.dtos.SchoolClassDTO;
-import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
-import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
+import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.repositories.SchoolClassRepository;
+import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
 
@@ -79,6 +79,7 @@ public class SchoolClassService {
 	private void copyDtoToEntity(SchoolClassDTO dto, SchoolClass entity) {
 		entity.setName(dto.getName());
 		entity.setPeriod(dto.getPeriod());
+		entity.setPhase(dto.getPhase());
 		
 		entity.getStudents().clear();
 		for (StudentDTO stuDto : dto.getStudents()) {

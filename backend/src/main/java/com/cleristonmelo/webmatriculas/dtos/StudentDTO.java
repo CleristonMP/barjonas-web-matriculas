@@ -5,14 +5,16 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Address;
 import com.cleristonmelo.webmatriculas.entities.Parent;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.cleristonmelo.webmatriculas.entities.custom_types.Birthplace;
-import com.cleristonmelo.webmatriculas.entities.custom_types.NationalId;
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
+import com.cleristonmelo.webmatriculas.entities.weak.Birthplace;
+import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
+import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
 public class StudentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -26,7 +28,7 @@ public class StudentDTO implements Serializable {
 	private Race race;
 	private String disability;
 	
-	private Integer socialId;
+	private Long socialId;
 	private NationalId nationalId;
 	private String email;
 	
@@ -38,10 +40,12 @@ public class StudentDTO implements Serializable {
 	
 	private Set<ParentDTO> parents = new HashSet<>();
 	
+	private Set<PhoneDTO> phones = new HashSet<>();
+	
 	public StudentDTO() {
 	}
 	
-	public StudentDTO(Long enrollment, String name, String lastName, Integer socialId, Gender gender,
+	public StudentDTO(Long enrollment, String name, String lastName, Long socialId, Gender gender,
 			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
 			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
@@ -82,6 +86,12 @@ public class StudentDTO implements Serializable {
 		parents.forEach(parent -> this.parents.add(new ParentDTO(parent)));
 	}
 	
+	public StudentDTO(Student entity, Set<Parent> parents, Set<Phone> phones) {
+		this(entity);
+		parents.forEach(parent -> this.parents.add(new ParentDTO(parent)));
+		phones.forEach(phone -> this.phones.add(new PhoneDTO(phone)));
+	}
+	
 	public Long getEnrollment() {
 		return enrollment;
 	}
@@ -106,11 +116,11 @@ public class StudentDTO implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public Integer getSocialId() {
+	public Long getSocialId() {
 		return socialId;
 	}
 
-	public void setSocialId(Integer socialId) {
+	public void setSocialId(Long socialId) {
 		this.socialId = socialId;
 	}
 
@@ -196,5 +206,9 @@ public class StudentDTO implements Serializable {
 
 	public Set<ParentDTO> getParents() {
 		return parents;
+	}
+
+	public Set<PhoneDTO> getPhones() {
+		return phones;
 	}
 }

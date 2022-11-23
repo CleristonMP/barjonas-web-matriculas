@@ -3,14 +3,11 @@ package com.cleristonmelo.webmatriculas.entities.weak;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-
-import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 
 @Entity
 @Table(name="tb_phase")
@@ -18,31 +15,25 @@ public class Phase implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name = "school_class_id")
-	private Long schoolClassId;
-	
-	@OneToOne
-	@PrimaryKeyJoinColumn(name = "school_class_id", referencedColumnName = "id")
-	private SchoolClass schoolClass;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	private String description;
 	
 	public Phase() {
 	}
 
-	public Phase(Long schoolClassId, SchoolClass schoolClass, String description) {
-		this.schoolClassId = schoolClass.getId();
-		this.schoolClass = schoolClass;
+	public Phase(Long id, String description) {
+		this.id = id;
 		this.description = description;
 	}
 
-	public SchoolClass getSchoolClass() {
-		return schoolClass;
+	public Long getId() {
+		return id;
 	}
 
-	public void setSchoolClass(SchoolClass schoolClass) {
-		this.schoolClass = schoolClass;
-		this.schoolClassId = schoolClass.getId();
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getDescription() {
@@ -51,10 +42,6 @@ public class Phase implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Long getSchoolClassId() {
-		return schoolClassId;
 	}
 
 	@Override

@@ -11,10 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_address")
@@ -29,31 +30,29 @@ public class Address implements Serializable {
 	private String number;
 	private String complement;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "city_id")
 	private City city;
 	
-	@OneToOne(mappedBy = "address")
-	private Student student;
-	
+	@JsonIgnore
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
 
+	@JsonIgnore
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 	
 	public Address() {
 	}
 
-	public Address(Long id, Integer zipCode, String district, String number, String complement, City city,
-			Student student) {
+	public Address(Long id, Integer zipCode, String district, String number, String complement, City city) {
 		this.id = id;
 		this.zipCode = zipCode;
 		this.district = district;
 		this.number = number;
 		this.complement = complement;
 		this.city = city;
-		this.student = student;
 	}
 
 	public Long getId() {
@@ -102,14 +101,6 @@ public class Address implements Serializable {
 
 	public void setCity(City city) {
 		this.city = city;
-	}
-
-	public Student getStudent() {
-		return student;
-	}
-
-	public void setStudent(Student student) {
-		this.student = student;
 	}
 
 	public Instant getCreatedAt() {

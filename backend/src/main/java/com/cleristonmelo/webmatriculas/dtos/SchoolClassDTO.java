@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.enums.Period;
+import com.cleristonmelo.webmatriculas.entities.weak.Phase;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 
 public class SchoolClassDTO implements Serializable {
@@ -20,22 +21,27 @@ public class SchoolClassDTO implements Serializable {
 	
 	@NotBlank(message = "Campo obrigatório")
 	private Period period;
+	
+	@NotBlank(message = "Campo obrigatório")
+	private Phase phase;
 
 	private Set<StudentDTO> students = new HashSet<>();
 	
 	public SchoolClassDTO() {
 	}
-
-	public SchoolClassDTO(Long id, String name, Period period) {
+	
+	public SchoolClassDTO(Long id, String name, Period period, Phase phase) {
 		this.id = id;
 		this.name = name;
 		this.period = period;
+		this.phase = phase;
 	}
-	
+
 	public SchoolClassDTO(SchoolClass entity) {
 		this.id = entity.getId();
 		this.name = entity.getName();
 		this.period = entity.getPeriod();
+		this.phase = entity.getPhase();
 	}
 	
 	public SchoolClassDTO(SchoolClass entity, Set<Student> students) {
@@ -55,7 +61,7 @@ public class SchoolClassDTO implements Serializable {
 		return name;
 	}
 
-	public void setNome(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -65,6 +71,14 @@ public class SchoolClassDTO implements Serializable {
 
 	public void setPeriod(Period period) {
 		this.period = period;
+	}
+
+	public Phase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(Phase phase) {
+		this.phase = phase;
 	}
 
 	public Set<StudentDTO> getStudents() {

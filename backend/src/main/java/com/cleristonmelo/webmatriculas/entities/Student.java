@@ -21,15 +21,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
-import com.cleristonmelo.webmatriculas.entities.custom_types.Birthplace;
-import com.cleristonmelo.webmatriculas.entities.custom_types.NationalId;
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
+import com.cleristonmelo.webmatriculas.entities.weak.Birthplace;
+import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
+import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
 @Entity
-@Table(name = "tb_student", uniqueConstraints = @UniqueConstraint(columnNames = {"socialId", "nationalId", "email"}))
+@Table(name = "tb_student")
 public class Student implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -37,32 +37,44 @@ public class Student implements Serializable {
 	private Long enrollment;
 	private String name;
 	private String lastName;
-	private Birthplace birthPlace;
 	private Boolean socialAssistance;
 	private String disability;
-	private Integer socialId;
-	private NationalId nationalId;
 	private String email;
-
+	
+	@Column(unique = true)
+	private Long socialId;
+	
 	@Enumerated(EnumType.STRING)
 	private Race race;
-
+	
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private LocalDate birthDate;
+
+	@ManyToOne
+	@JoinColumn(name = "birth_place_id", referencedColumnName = "id")
+	private Birthplace birthPlace;
+
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.EAGER)
+	private NationalId nationalId;
 	
-	@OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
-	@JoinColumn(name = "address_id", referencedColumnName = "id")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_id")
 	private Address address;
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "student_id")
+	private Set<Parent> parents = new HashSet<>();
 	
 	@ManyToOne
 	@JoinColumn(name = "school_class_id")
 	private SchoolClass schoolClass;
 	
-	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
-	private Set<Parent> parents = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "student_id")
+	private Set<Phone> phones = new HashSet<>();
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
@@ -73,7 +85,7 @@ public class Student implements Serializable {
 	public Student() {
 	}
 	
-	public Student(Long enrollment, String name, String lastName, Integer socialId, Gender gender,
+	public Student(Long enrollment, String name, String lastName, Long socialId, Gender gender,
 			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
 			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
@@ -116,11 +128,11 @@ public class Student implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public Integer getSocialId() {
+	public Long getSocialId() {
 		return socialId;
 	}
 
-	public void setSocialId(Integer socialId) {
+	public void setSocialId(Long socialId) {
 		this.socialId = socialId;
 	}
 
@@ -206,6 +218,10 @@ public class Student implements Serializable {
 
 	public Set<Parent> getParents() {
 		return parents;
+	}
+
+	public Set<Phone> getPhones() {
+		return phones;
 	}
 
 	public Instant getCreatedAt() {

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_city")
@@ -29,11 +30,12 @@ public class City implements Serializable {
 	private Long id;
 	private String name;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "state_id")
 	private State state;
 	
-	@OneToMany(mappedBy = "city", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "city")
 	private Set<Address> addresses = new HashSet<>();
 	
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
