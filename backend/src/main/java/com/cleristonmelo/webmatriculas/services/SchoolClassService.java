@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cleristonmelo.webmatriculas.dtos.SchoolClassDTO;
-import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
-import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.entities.enums.Period;
 import com.cleristonmelo.webmatriculas.repositories.SchoolClassRepository;
-import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
 
@@ -27,12 +25,9 @@ public class SchoolClassService {
 	@Autowired
 	private SchoolClassRepository repository;
 	
-	@Autowired
-	private StudentRepository studentRepository;
-	
 	@Transactional(readOnly = true)
-	public Page<SchoolClassDTO> findAllPaged(Pageable pageable, String name) {
-		Page<SchoolClass> page = repository.find(pageable, name);
+	public Page<SchoolClassDTO> findAllPaged(Pageable pageable, String name, Period period) {
+		Page<SchoolClass> page = repository.find(pageable, name, period);
 		return page.map(x -> new SchoolClassDTO(x));
 	}
 	
@@ -80,11 +75,5 @@ public class SchoolClassService {
 		entity.setName(dto.getName());
 		entity.setPeriod(dto.getPeriod());
 		entity.setPhase(dto.getPhase());
-		
-		entity.getStudents().clear();
-		for (StudentDTO stuDto : dto.getStudents()) {
-			Student student = studentRepository.getOne(stuDto.getEnrollment());
-			entity.getStudents().add(student);
-		}
 	}	
 }

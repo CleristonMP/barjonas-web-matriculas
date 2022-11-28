@@ -1,12 +1,10 @@
 package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,8 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,19 +26,12 @@ public class City implements Serializable {
 	private Long id;
 	private String name;
 	
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "state_id")
 	private State state;
 	
-	@OneToMany(mappedBy = "city")
-	private Set<Address> addresses = new HashSet<>();
-	
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant createdAt;
-
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant updatedAt;
+	@OneToMany(mappedBy="birthPlace")
+	private Set<Student> students = new HashSet<>();
 	
 	public City() {
 	}
@@ -76,27 +65,10 @@ public class City implements Serializable {
 	public void setState(State state) {
 		this.state = state;
 	}
-
-	public Set<Address> getAddresses() {
-		return addresses;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	@PrePersist
-	public void prePersist() {
-		createdAt = Instant.now();
-	}
-
-	@PreUpdate
-	public void preUpdate() {
-		updatedAt = Instant.now();
+	
+	@JsonIgnore
+	public Set<Student> getStudents() {
+		return students;
 	}
 
 	@Override

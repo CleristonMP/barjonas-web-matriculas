@@ -3,9 +3,11 @@ package com.cleristonmelo.webmatriculas.entities.weak;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -17,25 +19,39 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class NationalId implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id	
+    @Id
+    @Column(name = "student_id")
+	private Long id;
+    
+    @Column(unique = true)
 	private Long number;
 	private String issuingEntity;
 	private String state;
 	private String city;
 	
-	@JsonIgnore
-	@OneToOne
-	@JoinColumn(name = "student_id")
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "student_id")
 	private Student student;
 	
 	public NationalId() {
 	}
 
-	public NationalId(Long number, String issuingEntity, String state, String city) {
+	public NationalId(Long id, Long number, String issuingEntity, String state, String city, Student student) {
+		this.id = id;
 		this.number = number;
 		this.issuingEntity = issuingEntity;
 		this.state = state;
 		this.city = city;
+		this.student = student;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getNumber() {
@@ -69,7 +85,8 @@ public class NationalId implements Serializable {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	
+
+	@JsonIgnore
 	public Student getStudent() {
 		return student;
 	}

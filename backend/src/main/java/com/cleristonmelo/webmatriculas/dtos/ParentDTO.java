@@ -11,15 +11,15 @@ public class ParentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	
+
 	@Size(min = 3, max = 50, message = "O nome do pai ou da mãe deve ter entre 3 e 50 caracteres")
 	@NotBlank(message = "Campo requerido")
 	private String name;
-	
+
 	@Size(min = 3, max = 50, message = "O sobrenome do pai ou da mãe deve ter entre 3 e 50 caracteres")
 	@NotBlank(message = "Campo requerido")
 	private String lastName;
-	
+
 	public ParentDTO() {
 	}
 
@@ -28,7 +28,7 @@ public class ParentDTO implements Serializable {
 		this.name = name;
 		this.lastName = lastName;
 	}
-	
+
 	public ParentDTO(Parent entity) {
 		this.id = entity.getId();
 		this.name = entity.getName();

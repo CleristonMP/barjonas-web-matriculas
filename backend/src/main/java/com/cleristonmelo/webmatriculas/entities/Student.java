@@ -12,19 +12,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weak.Birthplace;
 import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
 import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
@@ -32,7 +33,7 @@ import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 @Table(name = "tb_student")
 public class Student implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	private Long enrollment;
 	private String name;
@@ -40,70 +41,75 @@ public class Student implements Serializable {
 	private Boolean socialAssistance;
 	private String disability;
 	private String email;
-	
+
 	@Column(unique = true)
 	private Long socialId;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Race race;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
-	
+
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private LocalDate birthDate;
 
 	@ManyToOne
-	@JoinColumn(name = "birth_place_id", referencedColumnName = "id")
-	private Birthplace birthPlace;
+	@JoinColumn(name = "birth_place_id")
+	private City birthPlace;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "student")
+	@PrimaryKeyJoinColumn
 	private NationalId nationalId;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "address_id")
+
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "student")
+	@PrimaryKeyJoinColumn
 	private Address address;
-	
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name = "student_id")
-	private Set<Parent> parents = new HashSet<>();
-	
+
 	@ManyToOne
 	@JoinColumn(name = "school_class_id")
 	private SchoolClass schoolClass;
 	
+	@ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+        name = "tb_student_parent", 
+        joinColumns = { @JoinColumn(name = "student_id") }, 
+        inverseJoinColumns = { @JoinColumn(name = "parent_id") }
+    )
+	private Set<Parent> parents = new HashSet<>();
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "student_id")
 	private Set<Phone> phones = new HashSet<>();
-	
+
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
 
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
-	
+
 	public Student() {
 	}
-	
-	public Student(Long enrollment, String name, String lastName, Long socialId, Gender gender,
-			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
-			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
+
+	public Student(Long enrollment, String name, String lastName, Boolean socialAssistance, String disability,
+			String email, Long socialId, Race race, Gender gender, LocalDate birthDate, City birthPlace,
+			NationalId nationalId, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
 		this.name = name;
 		this.lastName = lastName;
-		this.socialId = socialId;
-		this.gender = gender;
-		this.birthPlace = birthPlace;
 		this.socialAssistance = socialAssistance;
-		this.race = race;
 		this.disability = disability;
-		this.nationalId = nationalId;
 		this.email = email;
+		this.socialId = socialId;
+		this.race = race;
+		this.gender = gender;
 		this.birthDate = birthDate;
+		this.birthPlace = birthPlace;
+		this.nationalId = nationalId;
 		this.address = address;
 		this.schoolClass = schoolClass;
 	}
-	
+
 	public Long getEnrollment() {
 		return enrollment;
 	}
@@ -144,14 +150,6 @@ public class Student implements Serializable {
 		this.gender = gender;
 	}
 
-	public Birthplace getBirthPlace() {
-		return birthPlace;
-	}
-
-	public void setBirthPlace(Birthplace birthPlace) {
-		this.birthPlace = birthPlace;
-	}
-
 	public Boolean getSocialAssistance() {
 		return socialAssistance;
 	}
@@ -176,14 +174,6 @@ public class Student implements Serializable {
 		this.disability = disability;
 	}
 
-	public NationalId getNationalId() {
-		return nationalId;
-	}
-
-	public void setNationalId(NationalId nationalId) {
-		this.nationalId = nationalId;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -198,6 +188,22 @@ public class Student implements Serializable {
 
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
+	}
+
+	public City getBirthPlace() {
+		return birthPlace;
+	}
+
+	public void setBirthPlace(City birthPlace) {
+		this.birthPlace = birthPlace;
+	}
+
+	public NationalId getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(NationalId nationalId) {
+		this.nationalId = nationalId;
 	}
 
 	public Address getAddress() {
@@ -257,5 +263,10 @@ public class Student implements Serializable {
 			return false;
 		Student other = (Student) obj;
 		return Objects.equals(enrollment, other.enrollment);
+	}
+
+	@Override
+	public String toString() {
+		return "Student [enrollment=" + enrollment + ", name=" + name + ", lastName=" + lastName + "]";
 	}
 }

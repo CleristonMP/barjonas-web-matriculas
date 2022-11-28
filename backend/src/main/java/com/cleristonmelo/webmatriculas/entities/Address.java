@@ -1,18 +1,13 @@
 package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,37 +17,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "student_id")
 	private Long id;
 	private Integer zipCode;
 	private String district;
 	private String number;
 	private String complement;
 	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "city_id")
-	private City city;
-	
-	@JsonIgnore
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant createdAt;
-
-	@JsonIgnore
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant updatedAt;
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "student_id")
+	private Student student;
 	
 	public Address() {
 	}
 
-	public Address(Long id, Integer zipCode, String district, String number, String complement, City city) {
+	public Address(Long id, Integer zipCode, String district, String number, String complement, Student student) {
 		this.id = id;
 		this.zipCode = zipCode;
 		this.district = district;
 		this.number = number;
 		this.complement = complement;
-		this.city = city;
+		this.student = student;
 	}
 
 	public Long getId() {
@@ -95,46 +82,12 @@ public class Address implements Serializable {
 		this.complement = complement;
 	}
 
-	public City getCity() {
-		return city;
+	@JsonIgnore
+	public Student getStudent() {
+		return student;
 	}
 
-	public void setCity(City city) {
-		this.city = city;
-	}
-
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	@PrePersist
-	public void prePersist() {
-		createdAt = Instant.now();
-	}
-
-	@PreUpdate
-	public void preUpdate() {
-		updatedAt = Instant.now();
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Address other = (Address) obj;
-		return Objects.equals(id, other.id);
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 }

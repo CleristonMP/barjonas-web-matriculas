@@ -5,11 +5,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.enums.Period;
 import com.cleristonmelo.webmatriculas.entities.weak.Phase;
-import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 
 public class SchoolClassDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -19,13 +20,13 @@ public class SchoolClassDTO implements Serializable {
 	@NotBlank(message = "Campo obrigatório")
 	private String name;
 	
-	@NotBlank(message = "Campo obrigatório")
+	@NotNull(message = "Campo obrigatório")
 	private Period period;
 	
-	@NotBlank(message = "Campo obrigatório")
+	@NotNull(message = "Campo obrigatório")
 	private Phase phase;
 
-	private Set<StudentDTO> students = new HashSet<>();
+	private Set<StudentSchoolClassDTO> students = new HashSet<>();
 	
 	public SchoolClassDTO() {
 	}
@@ -46,7 +47,7 @@ public class SchoolClassDTO implements Serializable {
 	
 	public SchoolClassDTO(SchoolClass entity, Set<Student> students) {
 		this(entity);
-		students.forEach(student -> this.students.add(new StudentDTO(student)));
+		students.forEach(student -> this.students.add(new StudentSchoolClassDTO(student)));
 	}
 
 	public Long getId() {
@@ -81,7 +82,7 @@ public class SchoolClassDTO implements Serializable {
 		this.phase = phase;
 	}
 
-	public Set<StudentDTO> getStudents() {
+	public Set<StudentSchoolClassDTO> getStudents() {
 		return students;
 	}
 }

@@ -2,20 +2,14 @@ package com.cleristonmelo.webmatriculas.dtos;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotBlank;
-
 import com.cleristonmelo.webmatriculas.entities.City;
 import com.cleristonmelo.webmatriculas.entities.State;
 
 public class CityDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
 	private Long id;
-	
-	@NotBlank(message = "Campo obrigatório")
 	private String name;
-	
-	@NotBlank(message = "Campo obrigatório")
 	private State state;
 	
 	public CityDTO() {
@@ -53,7 +47,7 @@ public class CityDTO implements Serializable {
 		return state;
 	}
 
-	public void setEstado(State state) {
+	public void setState(State state) {
 		this.state = state;
-	}	
+	}
 }

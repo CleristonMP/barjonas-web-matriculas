@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cleristonmelo.webmatriculas.dtos.SchoolClassDTO;
+import com.cleristonmelo.webmatriculas.entities.enums.Period;
 import com.cleristonmelo.webmatriculas.services.SchoolClassService;
 
 @RestController
@@ -31,8 +32,9 @@ public class SchoolClassResource {
 	
 	@GetMapping
 	public ResponseEntity<Page<SchoolClassDTO>> findAll(Pageable pageable,
-			@RequestParam(value = "name", defaultValue = "") String name) {
-		Page<SchoolClassDTO> page = service.findAllPaged(pageable, name);
+			@RequestParam(value = "name", defaultValue = "") String name,
+			@RequestParam(value = "period", defaultValue = "") Period period) {
+		Page<SchoolClassDTO> page = service.findAllPaged(pageable, name, period);
 		return ResponseEntity.ok().body(page);
 	}
 	

@@ -5,14 +5,17 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Address;
+import com.cleristonmelo.webmatriculas.entities.City;
 import com.cleristonmelo.webmatriculas.entities.Parent;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weak.Birthplace;
 import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
 import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 
@@ -20,63 +23,65 @@ public class StudentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long enrollment;
+	
+	@Size(min = 3, max = 50, message = "O nome do pai ou da mãe deve ter entre 3 e 50 caracteres")
+	@NotBlank(message = "Campo requerido")
 	private String name;
+	
+	@Size(min = 3, max = 50, message = "O sobrenome do pai ou da mãe deve ter entre 3 e 50 caracteres")
+	@NotBlank(message = "Campo requerido")
 	private String lastName;
 	private Gender gender;
-	private Birthplace birthPlace;
 	private Boolean socialAssistance;
 	private Race race;
 	private String disability;
-	
 	private Long socialId;
-	private NationalId nationalId;
 	private String email;
-	
 	private LocalDate birthDate;
-	
+
+	private City birthPlace;
+	private NationalId nationalId;
 	private Address address;
-	
 	private SchoolClass schoolClass;
 	
 	private Set<ParentDTO> parents = new HashSet<>();
-	
 	private Set<PhoneDTO> phones = new HashSet<>();
-	
+
 	public StudentDTO() {
 	}
-	
-	public StudentDTO(Long enrollment, String name, String lastName, Long socialId, Gender gender,
-			Birthplace birthPlace, Boolean socialAssistance, Race race, String disability, NationalId nationalId,
-			String email, LocalDate birthDate, Address address, SchoolClass schoolClass) {
+
+	public StudentDTO(Long enrollment, String name, String lastName, Gender gender, Boolean socialAssistance, Race race,
+			String disability, Long socialId, String email, LocalDate birthDate, City birthPlace, NationalId nationalId,
+			Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
 		this.name = name;
 		this.lastName = lastName;
-		this.socialId = socialId;
 		this.gender = gender;
-		this.birthPlace = birthPlace;
 		this.socialAssistance = socialAssistance;
 		this.race = race;
 		this.disability = disability;
-		this.nationalId = nationalId;
+		this.socialId = socialId;
 		this.email = email;
 		this.birthDate = birthDate;
+		this.birthPlace = birthPlace;
+		this.nationalId = nationalId;
 		this.address = address;
 		this.schoolClass = schoolClass;
 	}
-	
+
 	public StudentDTO(Student entity) {
 		this.enrollment = entity.getEnrollment();
 		this.name = entity.getName();
 		this.lastName = entity.getLastName();
-		this.socialId = entity.getSocialId();
 		this.gender = entity.getGender();
-		this.birthPlace = entity.getBirthPlace();
 		this.socialAssistance = entity.getSocialAssistance();
 		this.race = entity.getRace();
 		this.disability = entity.getDisability();
-		this.nationalId = entity.getNationalId();
+		this.socialId = entity.getSocialId();
 		this.email = entity.getEmail();
 		this.birthDate = entity.getBirthDate();
+		this.birthPlace = entity.getBirthPlace();
+		this.nationalId = entity.getNationalId();
 		this.address = entity.getAddress();
 		this.schoolClass = entity.getSchoolClass();
 	}
@@ -91,7 +96,7 @@ public class StudentDTO implements Serializable {
 		parents.forEach(parent -> this.parents.add(new ParentDTO(parent)));
 		phones.forEach(phone -> this.phones.add(new PhoneDTO(phone)));
 	}
-	
+
 	public Long getEnrollment() {
 		return enrollment;
 	}
@@ -116,28 +121,12 @@ public class StudentDTO implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public Long getSocialId() {
-		return socialId;
-	}
-
-	public void setSocialId(Long socialId) {
-		this.socialId = socialId;
-	}
-
 	public Gender getGender() {
 		return gender;
 	}
 
 	public void setGender(Gender gender) {
 		this.gender = gender;
-	}
-
-	public Birthplace getBirthPlace() {
-		return birthPlace;
-	}
-
-	public void setBirthPlace(Birthplace birthPlace) {
-		this.birthPlace = birthPlace;
 	}
 
 	public Boolean getSocialAssistance() {
@@ -164,12 +153,12 @@ public class StudentDTO implements Serializable {
 		this.disability = disability;
 	}
 
-	public NationalId getNationalId() {
-		return nationalId;
+	public Long getSocialId() {
+		return socialId;
 	}
 
-	public void setNationalId(NationalId nationalId) {
-		this.nationalId = nationalId;
+	public void setSocialId(Long socialId) {
+		this.socialId = socialId;
 	}
 
 	public String getEmail() {
@@ -186,6 +175,22 @@ public class StudentDTO implements Serializable {
 
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
+	}
+
+	public City getBirthPlace() {
+		return birthPlace;
+	}
+
+	public void setBirthPlace(City birthPlace) {
+		this.birthPlace = birthPlace;
+	}
+
+	public NationalId getNationalId() {
+		return nationalId;
+	}
+
+	public void setNationalId(NationalId nationalId) {
+		this.nationalId = nationalId;
 	}
 
 	public Address getAddress() {

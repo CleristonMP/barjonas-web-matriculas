@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,8 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -38,11 +37,12 @@ public class SchoolClass implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Period period;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "phase_id", referencedColumnName = "id")
+	@ManyToOne
+	@JoinColumn(name = "phase_id", nullable=false)
 	private Phase phase;
 	
-	@OneToMany(mappedBy = "schoolClass")
+	@OneToMany
+	@JoinColumn(name = "school_class_id")
 	private Set<Student> students = new HashSet<>();
 	
 	@JsonIgnore

@@ -1,36 +1,29 @@
 package com.cleristonmelo.webmatriculas.dtos;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.cleristonmelo.webmatriculas.entities.City;
 import com.cleristonmelo.webmatriculas.entities.State;
 
 public class StateDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Long id;
 	private String name;
-	
-	private Set<CityDTO> cities = new HashSet<>();
+	private String country;
 	
 	public StateDTO() {
 	}
 
-	public StateDTO(Long id, String name) {
+	public StateDTO(Long id, String name, String country) {
 		this.id = id;
 		this.name = name;
+		this.country = country;
 	}
 	
 	public StateDTO(State entity) {
 		this.id = entity.getId();
 		this.name = entity.getName();
-	}
-	
-	public StateDTO(State entity, Set<City> cities) {
-		this(entity);
-		cities.forEach(city -> this.cities.add(new CityDTO(city)));
+		this.country = entity.getCountry();
 	}
 
 	public Long getId() {
@@ -49,7 +42,11 @@ public class StateDTO implements Serializable {
 		this.name = name;
 	}
 
-	public Set<CityDTO> getCities() {
-		return cities;
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 }
