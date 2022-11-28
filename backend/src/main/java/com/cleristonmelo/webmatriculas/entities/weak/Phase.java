@@ -1,4 +1,4 @@
-package com.cleristonmelo.webmatriculas.entities;
+package com.cleristonmelo.webmatriculas.entities.weak;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -9,32 +9,32 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "tb_parent")
-public class Parent implements Serializable {
+@Table(name="tb_phase")
+public class Phase implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
-	private String lastName;
+
+	private String description;
 	
-	@ManyToMany(mappedBy = "parents")
-	private Set<Student> students = new HashSet<>();
-    
-	public Parent() {
+	@OneToMany(mappedBy = "phase")
+	private Set<SchoolClass> schoolClasses = new HashSet<>();
+	
+	public Phase() {
 	}
-	
-	public Parent(Long id, String name, String lastName) {
+
+	public Phase(Long id, String description) {
 		this.id = id;
-		this.name = name;
-		this.lastName = lastName;
+		this.description = description;
 	}
 
 	public Long getId() {
@@ -45,25 +45,17 @@ public class Parent implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@JsonIgnore
-	public Set<Student> getStudents() {
-		return students;
+	public Set<SchoolClass> getSchoolClasses() {
+		return schoolClasses;
 	}
 
 	@Override
@@ -79,7 +71,7 @@ public class Parent implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Parent other = (Parent) obj;
+		Phase other = (Phase) obj;
 		return Objects.equals(id, other.id);
 	}
 }

@@ -9,32 +9,37 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "tb_parent")
-public class Parent implements Serializable {
+@Table(name = "tb_city")
+public class City implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	private String lastName;
 	
-	@ManyToMany(mappedBy = "parents")
+	@ManyToOne
+	@JoinColumn(name = "state_id")
+	private State state;
+	
+	@OneToMany(mappedBy="birthPlace")
 	private Set<Student> students = new HashSet<>();
-    
-	public Parent() {
-	}
 	
-	public Parent(Long id, String name, String lastName) {
+	public City() {
+	}
+
+	public City(Long id, String name, State state) {
 		this.id = id;
 		this.name = name;
-		this.lastName = lastName;
+		this.state = state;
 	}
 
 	public Long getId() {
@@ -53,14 +58,14 @@ public class Parent implements Serializable {
 		this.name = name;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public State getState() {
+		return state;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setState(State state) {
+		this.state = state;
 	}
-
+	
 	@JsonIgnore
 	public Set<Student> getStudents() {
 		return students;
@@ -79,7 +84,7 @@ public class Parent implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Parent other = (Parent) obj;
+		City other = (City) obj;
 		return Objects.equals(id, other.id);
 	}
 }

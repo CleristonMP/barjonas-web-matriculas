@@ -5,9 +5,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
+import com.cleristonmelo.webmatriculas.entities.Student;
+import com.cleristonmelo.webmatriculas.entities.enums.Period;
+import com.cleristonmelo.webmatriculas.entities.weak.Phase;
 
 public class SchoolClassDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -17,29 +20,34 @@ public class SchoolClassDTO implements Serializable {
 	@NotBlank(message = "Campo obrigatório")
 	private String name;
 	
-	@NotBlank(message = "Campo obrigatório")
-	private String period;
+	@NotNull(message = "Campo obrigatório")
+	private Period period;
+	
+	@NotNull(message = "Campo obrigatório")
+	private Phase phase;
 
-	private Set<StudentDTO> students = new HashSet<>();
+	private Set<StudentSchoolClassDTO> students = new HashSet<>();
 	
 	public SchoolClassDTO() {
 	}
-
-	public SchoolClassDTO(Long id, String name, String period) {
+	
+	public SchoolClassDTO(Long id, String name, Period period, Phase phase) {
 		this.id = id;
 		this.name = name;
 		this.period = period;
+		this.phase = phase;
 	}
-	
+
 	public SchoolClassDTO(SchoolClass entity) {
 		this.id = entity.getId();
 		this.name = entity.getName();
 		this.period = entity.getPeriod();
+		this.phase = entity.getPhase();
 	}
 	
 	public SchoolClassDTO(SchoolClass entity, Set<Student> students) {
 		this(entity);
-		students.forEach(student -> this.students.add(new StudentDTO(student)));
+		students.forEach(student -> this.students.add(new StudentSchoolClassDTO(student)));
 	}
 
 	public Long getId() {
@@ -54,19 +62,27 @@ public class SchoolClassDTO implements Serializable {
 		return name;
 	}
 
-	public void setNome(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getPeriod() {
+	public Period getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(String period) {
+	public void setPeriod(Period period) {
 		this.period = period;
 	}
 
-	public Set<StudentDTO> getStudents() {
+	public Phase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(Phase phase) {
+		this.phase = phase;
+	}
+
+	public Set<StudentSchoolClassDTO> getStudents() {
 		return students;
 	}
 }

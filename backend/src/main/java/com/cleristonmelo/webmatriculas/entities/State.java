@@ -1,42 +1,45 @@
 package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(name = "tb_county")
-public class County implements Serializable {
+@Table(name = "tb_state")
+public class State implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(unique = true)
 	private String name;
-	private String state;
 	
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant createdAt;
-
-	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-	private Instant updatedAt;
+	private String country;
 	
-	public County() {
+	@OneToMany(mappedBy = "state")
+	private Set<City> cities = new HashSet<>();
+	
+	public State() {
 	}
 
-	public County(Long id, String name, String state) {
+	public State(Long id, String name, String country, Set<City> cities) {
 		this.id = id;
 		this.name = name;
-		this.state = state;
+		this.country = country;
+		this.cities = cities;
 	}
 
 	public Long getId() {
@@ -55,30 +58,17 @@ public class County implements Serializable {
 		this.name = name;
 	}
 
-	public String getState() {
-		return state;
+	public String getCountry() {
+		return country;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public Instant getUpdatedAt() {
-		return updatedAt;
-	}
-
-	@PrePersist
-	public void prePersist() {
-		createdAt = Instant.now();
-	}
-
-	@PreUpdate
-	public void preUpdate() {
-		updatedAt = Instant.now();
+	@JsonIgnore
+	public Set<City> getCities() {
+		return cities;
 	}
 
 	@Override
@@ -94,7 +84,7 @@ public class County implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		County other = (County) obj;
+		State other = (State) obj;
 		return Objects.equals(id, other.id);
 	}
 }

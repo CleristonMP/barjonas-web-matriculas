@@ -1,57 +1,43 @@
 package com.cleristonmelo.webmatriculas.resources;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.cleristonmelo.webmatriculas.dtos.ParentDTO;
-import com.cleristonmelo.webmatriculas.services.ParentService;
+import com.cleristonmelo.webmatriculas.dtos.StateDTO;
+import com.cleristonmelo.webmatriculas.services.StateService;
 
 @RestController
-@RequestMapping(value = "/parents")
-public class ParentResource {
+@RequestMapping(value = "/states")
+public class StateResource {
 	
 	@Autowired
-	private ParentService service;
+	private StateService service;
 	
 	@GetMapping
-	public ResponseEntity<Page<ParentDTO>> findAll(Pageable pageable) {
-		Page<ParentDTO> page = service.findAllPaged(pageable);
-		return ResponseEntity.ok().body(page);
-	}
-	
-	@GetMapping(value = "/{id}")
-	public ResponseEntity<ParentDTO> findById(@PathVariable Long id){
-		ParentDTO dto = service.findById(id);	
-		return ResponseEntity.ok().body(dto);
+	public ResponseEntity<List<StateDTO>> findAll() {
+		List<StateDTO> list = service.findAllPaged();
+		return ResponseEntity.ok().body(list);
 	}
 	
 	@PostMapping
-	public ResponseEntity<ParentDTO> insert(@Valid @RequestBody ParentDTO dto){
+	public ResponseEntity<StateDTO> insert(@Valid @RequestBody StateDTO dto){
 		dto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(dto.getId()).toUri();		
 		return ResponseEntity.created(uri).body(dto);
-	}
-	
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<ParentDTO> update(@PathVariable Long id, @Valid @RequestBody ParentDTO dto) {
-		dto = service.update(id, dto);
-		return ResponseEntity.ok().body(dto);
 	}
 	
 	@DeleteMapping(value = "/{id}")

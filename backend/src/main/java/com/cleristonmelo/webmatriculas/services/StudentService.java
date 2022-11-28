@@ -1,6 +1,8 @@
 package com.cleristonmelo.webmatriculas.services;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -12,84 +14,155 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cleristonmelo.webmatriculas.dtos.ParentDTO;
 import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
+import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
+import com.cleristonmelo.webmatriculas.entities.Address;
+import com.cleristonmelo.webmatriculas.entities.Parent;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
+import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
+import com.cleristonmelo.webmatriculas.entities.weak.Phone;
 import com.cleristonmelo.webmatriculas.repositories.AddressRepository;
+import com.cleristonmelo.webmatriculas.repositories.CityRepository;
+import com.cleristonmelo.webmatriculas.repositories.NationalIdRepository;
 import com.cleristonmelo.webmatriculas.repositories.ParentRepository;
 import com.cleristonmelo.webmatriculas.repositories.SchoolClassRepository;
+import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
 import com.cleristonmelo.webmatriculas.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class StudentService {
-	
+
 	@Autowired
 	private StudentRepository repository;
-	
+
 	@Autowired
-	private AddressRepository addressRepository;
-	
+	private CityRepository cityRepository;
+
 	@Autowired
 	private SchoolClassRepository schoolClassRepository;
-	
+
 	@Autowired
 	private ParentRepository parentRepository;
-	
+
+	@Autowired
+	private NationalIdRepository nationalIdRepository;
+
+	@Autowired
+	private AddressRepository addressRepository;
+
 	@Transactional(readOnly = true)
 	public Page<StudentDTO> findAllPaged(Pageable pageable, Long schoolClassId, String name) {
 		Page<Student> page = repository.find(pageable, schoolClassId, name);
 		return page.map(x -> new StudentDTO(x));
 	}
-	
+
 	@Transactional(readOnly = true)
-	public StudentDTO findById(Long id) {
-		Optional<Student> obj = repository.findById(id);
+	public StudentDTO findByEnrollment(Long enrollment) {
+		Optional<Student> obj = repository.findById(enrollment);
 		Student entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
-		return new StudentDTO(entity);
+		return new StudentDTO(entity, entity.getParents(), entity.getPhones());
 	}
-	
+
 	@Transactional
 	public StudentDTO insert(StudentDTO dto) {
 		Student entity = new Student();
-		copyDtoToEntity(dto, entity);
+		copyDtoToEntity(dto, entity, false);
 		entity = repository.save(entity);
-		return new StudentDTO(entity);
+		return new StudentDTO(entity, entity.getParents(), entity.getPhones());
 	}
 
 	@Transactional
-	public StudentDTO update(Long id, StudentDTO dto) {
+	public StudentDTO update(Long enrollment, StudentDTO dto) {
 		try {
-			Student entity = repository.getOne(id);
-			copyDtoToEntity(dto, entity);
+			Student entity = repository.getOne(enrollment);
+			copyDtoToEntity(dto, entity, true);
 			entity = repository.save(entity);
-			return new StudentDTO(entity);
-		}
-		catch (EntityNotFoundException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
+			return new StudentDTO(entity, entity.getParents(), entity.getPhones());
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + enrollment);
 		}
 	}
 
-	public void delete(Long id) {
+	public void delete(Long enrollment) {
 		try {
-			repository.deleteById(id);
-		}
-		catch (EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException("Id not found " + id);
-		}
-		catch (DataIntegrityViolationException e) {
+			repository.deleteById(enrollment);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("Id not found " + enrollment);
+		} catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
 	}
-	
-	private void copyDtoToEntity(StudentDTO dto, Student entity) {
+
+	private void copyDtoToEntity(StudentDTO dto, Student entity, boolean isEditing) {
 		entity.setEnrollment(dto.getEnrollment());
 		entity.setName(dto.getName());
 		entity.setLastName(dto.getLastName());
-		entity.setCpf(dto.getCpf());
+		entity.setSocialAssistance(dto.getSocialAssistance());
+		entity.setDisability(dto.getDisability());
+		entity.setSocialId(dto.getSocialId());
+		entity.setEmail(dto.getEmail());
+		entity.setRace(dto.getRace());
+		entity.setGender(dto.getGender());
 		entity.setBirthDate(dto.getBirthDate());
-		entity.setAddress(addressRepository.getOne(dto.getAddressId()));
-		entity.setSchoolClass(schoolClassRepository.getOne(dto.getSchoolClassId()));
-		entity.setParent(parentRepository.getOne(dto.getParentId()));
+
+		NationalId nationalId = new NationalId();
+		Address address = new Address();
+
+		if (!isEditing) {
+			entity.setBirthPlace(cityRepository.findById(dto.getBirthPlace().getId()).get());
+			nationalId.setStudent(entity);
+			address.setStudent(entity);
+		} else {
+			entity.setBirthPlace(dto.getBirthPlace());
+			nationalId = nationalIdRepository.getOne(dto.getEnrollment());
+			address = addressRepository.getOne(dto.getEnrollment());
+		}
+
+		nationalId.setNumber(dto.getNationalId().getNumber());
+		nationalId.setIssuingEntity(dto.getNationalId().getIssuingEntity());
+		nationalId.setCity(dto.getNationalId().getCity());
+		nationalId.setState(dto.getNationalId().getState());
+
+		entity.setNationalId(nationalId);
+
+		address.setZipCode(dto.getAddress().getZipCode());
+		address.setDistrict(dto.getAddress().getDistrict());
+		address.setNumber(dto.getAddress().getNumber());
+		address.setComplement(dto.getAddress().getComplement());
+
+		entity.setAddress(address);
+
+		entity.setSchoolClass(schoolClassRepository.findById(dto.getSchoolClass().getId()).get());
+
+		Set<Parent> savedParents = new HashSet<>();
+		for (ParentDTO prtDto : dto.getParents()) {
+			Parent obj = null;
+			obj = parentRepository.findByNameAndLastName(prtDto.getName(), prtDto.getLastName());
+			if (obj == null) {
+				Parent prt = new Parent();
+				prt.setName(prtDto.getName());
+				prt.setLastName(prtDto.getLastName());
+				Parent savedPrt = parentRepository.save(prt);
+				savedParents.add(savedPrt);
+			} else {
+				savedParents.add(obj);
+			}
+		}
+
+		entity.getParents().clear();
+		for (Parent prt : savedParents) {
+			Parent parent = parentRepository.getOne(prt.getId());
+			entity.getParents().add(parent);
+		}
+
+		entity.getPhones().clear();
+		for (PhoneDTO phn : dto.getPhones()) {
+			Phone phone = new Phone();
+			phone.setStudent(entity);
+			phone.setNumber(phn.getNumber());
+			entity.getPhones().add(phone);
+		}
 	}
 }
