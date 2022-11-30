@@ -25,9 +25,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
+import com.cleristonmelo.webmatriculas.entities.enums.Nationality;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weak.Phone;
+import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
+import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 
 @Entity
 @Table(name = "tb_student")
@@ -50,6 +51,9 @@ public class Student implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
+	
+	@Enumerated(EnumType.STRING)
+	private Nationality nationality;
 
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private LocalDate birthDate;
@@ -92,8 +96,8 @@ public class Student implements Serializable {
 	}
 
 	public Student(Long enrollment, String name, String lastName, Boolean socialAssistance, String disability,
-			String email, Long socialId, Race race, Gender gender, LocalDate birthDate, City birthPlace,
-			NationalId nationalId, Address address, SchoolClass schoolClass) {
+			String email, Long socialId, Race race, Gender gender, Nationality nationality, LocalDate birthDate,
+			City birthPlace, NationalId nationalId, Address address, SchoolClass schoolClass) {
 		this.enrollment = enrollment;
 		this.name = name;
 		this.lastName = lastName;
@@ -103,6 +107,7 @@ public class Student implements Serializable {
 		this.socialId = socialId;
 		this.race = race;
 		this.gender = gender;
+		this.nationality = nationality;
 		this.birthDate = birthDate;
 		this.birthPlace = birthPlace;
 		this.nationalId = nationalId;
@@ -148,6 +153,14 @@ public class Student implements Serializable {
 
 	public void setGender(Gender gender) {
 		this.gender = gender;
+	}
+
+	public Nationality getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(Nationality nationality) {
+		this.nationality = nationality;
 	}
 
 	public Boolean getSocialAssistance() {

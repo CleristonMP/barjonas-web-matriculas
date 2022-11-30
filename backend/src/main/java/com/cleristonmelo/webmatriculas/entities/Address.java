@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -29,17 +30,23 @@ public class Address implements Serializable {
     @MapsId
     @JoinColumn(name = "student_id")
 	private Student student;
+    
+    @ManyToOne
+    @JoinColumn(name="city_id", insertable = false, updatable = false)
+    private City city;
 	
 	public Address() {
 	}
 
-	public Address(Long id, Integer zipCode, String district, String number, String complement, Student student) {
+	public Address(Long id, Integer zipCode, String district, String number, String complement, Student student,
+			City city) {
 		this.id = id;
 		this.zipCode = zipCode;
 		this.district = district;
 		this.number = number;
 		this.complement = complement;
 		this.student = student;
+		this.city = city;
 	}
 
 	public Long getId() {
@@ -89,5 +96,13 @@ public class Address implements Serializable {
 
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
+	public void setCity(City city) {
+		this.city = city;
 	}
 }

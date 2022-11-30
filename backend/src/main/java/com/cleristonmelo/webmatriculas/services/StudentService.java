@@ -20,8 +20,8 @@ import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Address;
 import com.cleristonmelo.webmatriculas.entities.Parent;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weak.Phone;
+import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
+import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 import com.cleristonmelo.webmatriculas.repositories.AddressRepository;
 import com.cleristonmelo.webmatriculas.repositories.CityRepository;
 import com.cleristonmelo.webmatriculas.repositories.NationalIdRepository;
@@ -122,8 +122,7 @@ public class StudentService {
 
 		nationalId.setNumber(dto.getNationalId().getNumber());
 		nationalId.setIssuingEntity(dto.getNationalId().getIssuingEntity());
-		nationalId.setCity(dto.getNationalId().getCity());
-		nationalId.setState(dto.getNationalId().getState());
+		nationalId.setCity(cityRepository.getOne(dto.getNationalId().getCity().getId()));
 
 		entity.setNationalId(nationalId);
 
@@ -131,6 +130,7 @@ public class StudentService {
 		address.setDistrict(dto.getAddress().getDistrict());
 		address.setNumber(dto.getAddress().getNumber());
 		address.setComplement(dto.getAddress().getComplement());
+		address.setCity(cityRepository.getOne(dto.getAddress().getCity().getId()));
 
 		entity.setAddress(address);
 

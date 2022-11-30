@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -32,6 +33,14 @@ public class City implements Serializable {
 	
 	@OneToMany(mappedBy="birthPlace")
 	private Set<Student> students = new HashSet<>();
+
+	@OneToMany
+	@JoinColumn(name = "city_id")
+	private Set<Address> addresses = new HashSet<>();
+	
+	@OneToMany
+	@JoinColumn(name = "city_id")
+	private Set<NationalId> nationalIds = new HashSet<>();
 	
 	public City() {
 	}

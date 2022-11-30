@@ -46,6 +46,7 @@ INSERT INTO
     social_Id,
     race,
     gender,
+    nationality,
     birth_Date,
     birth_place_id,
     school_class_id
@@ -61,15 +62,16 @@ VALUES
     91853886065,
     'BROWN',
     'FEMALE',
+    'BRAZILIAN',
     '2023-02-18',
     1,
     1
   );
 
 INSERT INTO
-  tb_national_id (number, issuing_Entity, state, city, student_id)
+  tb_national_id (number, issuing_Entity, city_id, student_id)
 VALUES
-  (999632277845, 'SSP', 'MA', 'Canberra', 92944271);
+  (999632277845, 'SSP', 1, 92944271);
 
 INSERT INTO
   tb_address (
@@ -77,7 +79,8 @@ INSERT INTO
     district,
     number,
     complement,
-    student_id
+    student_id,
+    city_id
   )
 VALUES
   (
@@ -85,7 +88,8 @@ VALUES
     'Hải Phòng',
     '017Q',
     'facilisi. Sed',
-    92944271
+    92944271,
+    1
   );
 
 INSERT INTO tb_parent (name,last_Name)

@@ -1,4 +1,4 @@
-package com.cleristonmelo.webmatriculas.entities.weak;
+package com.cleristonmelo.webmatriculas.entities.weaks;
 
 import java.io.Serializable;
 import java.util.HashSet;

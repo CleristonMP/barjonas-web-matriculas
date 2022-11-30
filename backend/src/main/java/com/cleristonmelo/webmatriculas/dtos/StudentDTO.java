@@ -15,9 +15,10 @@ import com.cleristonmelo.webmatriculas.entities.Parent;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
+import com.cleristonmelo.webmatriculas.entities.enums.Nationality;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weak.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weak.Phone;
+import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
+import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 
 public class StudentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -38,6 +39,7 @@ public class StudentDTO implements Serializable {
 	private Long socialId;
 	private String email;
 	private LocalDate birthDate;
+	private Nationality nationality;
 
 	private City birthPlace;
 	private NationalId nationalId;
@@ -52,7 +54,7 @@ public class StudentDTO implements Serializable {
 
 	public StudentDTO(Long enrollment, String name, String lastName, Gender gender, Boolean socialAssistance, Race race,
 			String disability, Long socialId, String email, LocalDate birthDate, City birthPlace, NationalId nationalId,
-			Address address, SchoolClass schoolClass) {
+			Address address, SchoolClass schoolClass, Nationality nationality) {
 		this.enrollment = enrollment;
 		this.name = name;
 		this.lastName = lastName;
@@ -67,6 +69,7 @@ public class StudentDTO implements Serializable {
 		this.nationalId = nationalId;
 		this.address = address;
 		this.schoolClass = schoolClass;
+		this.nationality = nationality;
 	}
 
 	public StudentDTO(Student entity) {
@@ -84,6 +87,7 @@ public class StudentDTO implements Serializable {
 		this.nationalId = entity.getNationalId();
 		this.address = entity.getAddress();
 		this.schoolClass = entity.getSchoolClass();
+		this.nationality = entity.getNationality();
 	}
 	
 	public StudentDTO(Student entity, Set<Parent> parents) {
@@ -215,5 +219,13 @@ public class StudentDTO implements Serializable {
 
 	public Set<PhoneDTO> getPhones() {
 		return phones;
+	}
+
+	public Nationality getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(Nationality nationality) {
+		this.nationality = nationality;
 	}
 }

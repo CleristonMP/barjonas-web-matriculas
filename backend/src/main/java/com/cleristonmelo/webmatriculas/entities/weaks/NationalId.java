@@ -1,4 +1,4 @@
-package com.cleristonmelo.webmatriculas.entities.weak;
+package com.cleristonmelo.webmatriculas.entities.weaks;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -7,10 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.cleristonmelo.webmatriculas.entities.City;
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,8 +28,10 @@ public class NationalId implements Serializable {
     @Column(unique = true)
 	private Long number;
 	private String issuingEntity;
-	private String state;
-	private String city;
+
+    @ManyToOne
+    @JoinColumn(name="city_id", insertable = false, updatable = false)
+	private City city;
 	
     @OneToOne
     @MapsId
@@ -37,11 +41,10 @@ public class NationalId implements Serializable {
 	public NationalId() {
 	}
 
-	public NationalId(Long id, Long number, String issuingEntity, String state, String city, Student student) {
+	public NationalId(Long id, Long number, String issuingEntity, String state, City city, Student student) {
 		this.id = id;
 		this.number = number;
 		this.issuingEntity = issuingEntity;
-		this.state = state;
 		this.city = city;
 		this.student = student;
 	}
@@ -70,19 +73,11 @@ public class NationalId implements Serializable {
 		this.issuingEntity = issuingEntity;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getCity() {
+	public City getCity() {
 		return city;
 	}
 
-	public void setCity(String city) {
+	public void setCity(City city) {
 		this.city = city;
 	}
 
