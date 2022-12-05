@@ -8,4 +8,5 @@ import com.cleristonmelo.webmatriculas.entities.weaks.Phase;
 @Repository
 public interface PhaseRepository extends JpaRepository<Phase, Long> {
 
+	Phase findByDescriptionLike(String description);
 }

@@ -25,4 +25,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
 //	@Query("SELECT obj FROM Student obj JOIN FETCH obj.phones phns WHERE obj IN :students")
 //	List<Student> findStudentsWithPhones(List<Student> students);
+	
+	boolean existsStudentBySocialId(Long socialId);
 }
