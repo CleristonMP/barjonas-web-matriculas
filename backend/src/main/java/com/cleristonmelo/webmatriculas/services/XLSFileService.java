@@ -20,7 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cleristonmelo.webmatriculas.entities.Address;
 import com.cleristonmelo.webmatriculas.entities.City;
+import com.cleristonmelo.webmatriculas.entities.NationalId;
 import com.cleristonmelo.webmatriculas.entities.Parent;
+import com.cleristonmelo.webmatriculas.entities.Phase;
+import com.cleristonmelo.webmatriculas.entities.Phone;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.State;
 import com.cleristonmelo.webmatriculas.entities.Student;
@@ -28,9 +31,6 @@ import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Nationality;
 import com.cleristonmelo.webmatriculas.entities.enums.Period;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phase;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 import com.cleristonmelo.webmatriculas.repositories.CityRepository;
 import com.cleristonmelo.webmatriculas.repositories.NationalIdRepository;
 import com.cleristonmelo.webmatriculas.repositories.PhaseRepository;
@@ -271,7 +271,7 @@ public class XLSFileService {
 								}
 								String phn1 = phone1Concat.toString();
 								Long phoneNr = null;
-
+								
 								if (phn1.matches("\\d{8,11}")) {
 									Character c1 = phn1.charAt(0);
 									if (c1.toString().compareTo("3") == 0) {
@@ -293,7 +293,6 @@ public class XLSFileService {
 								if (phoneNr != null) {
 									phoneNumbers.add(phoneNr);
 									phone1.setNumber(phoneNr);
-									phone1.setStudent(student);
 									student.getPhones().add(phone1);
 								}
 							}
@@ -331,7 +330,6 @@ public class XLSFileService {
 								if (phoneNr != null) {
 									phoneNumbers.add(phoneNr);
 									phone2.setNumber(phoneNr);
-									phone2.setStudent(student);
 									student.getPhones().add(phone2);
 								}
 							}

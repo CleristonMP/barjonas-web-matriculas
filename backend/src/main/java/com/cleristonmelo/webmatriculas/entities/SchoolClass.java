@@ -21,7 +21,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import com.cleristonmelo.webmatriculas.entities.enums.Period;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phase;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity

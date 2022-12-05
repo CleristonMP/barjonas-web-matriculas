@@ -102,6 +102,12 @@ VALUES
 (92944271,1),
 (92944271,2);
 
-INSERT INTO tb_phone (number,student_id)
+INSERT INTO tb_phone (number)
 VALUES
-('48936679199',92944271);
+(48936679199),
+(98986678122);
+
+INSERT INTO tb_student_phone (student_id,phone_id)
+VALUES
+(92944271,48936679199),
+(92944271,98986678122);

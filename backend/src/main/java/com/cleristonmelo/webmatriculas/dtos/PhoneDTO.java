@@ -1,9 +1,9 @@
-package com.cleristonmelo.webmatriculas.dtos.weaks;
+package com.cleristonmelo.webmatriculas.dtos;
 
 import java.io.Serializable;
 
+import com.cleristonmelo.webmatriculas.entities.Phone;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PhoneDTO implements Serializable {
