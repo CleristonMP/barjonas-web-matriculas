@@ -15,17 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cleristonmelo.webmatriculas.dtos.ParentDTO;
+import com.cleristonmelo.webmatriculas.dtos.PhoneDTO;
 import com.cleristonmelo.webmatriculas.dtos.StudentDTO;
-import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Address;
+import com.cleristonmelo.webmatriculas.entities.NationalId;
 import com.cleristonmelo.webmatriculas.entities.Parent;
+import com.cleristonmelo.webmatriculas.entities.Phone;
 import com.cleristonmelo.webmatriculas.entities.Student;
-import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 import com.cleristonmelo.webmatriculas.repositories.AddressRepository;
 import com.cleristonmelo.webmatriculas.repositories.CityRepository;
 import com.cleristonmelo.webmatriculas.repositories.NationalIdRepository;
 import com.cleristonmelo.webmatriculas.repositories.ParentRepository;
+import com.cleristonmelo.webmatriculas.repositories.PhoneRepository;
 import com.cleristonmelo.webmatriculas.repositories.SchoolClassRepository;
 import com.cleristonmelo.webmatriculas.repositories.StudentRepository;
 import com.cleristonmelo.webmatriculas.services.exceptions.DatabaseException;
@@ -51,6 +52,9 @@ public class StudentService {
 
 	@Autowired
 	private AddressRepository addressRepository;
+	
+	@Autowired
+	private PhoneRepository phoneRepository;
 
 	@Transactional(readOnly = true)
 	public Page<StudentDTO> findAllPaged(Pageable pageable, Long schoolClassId, String name) {
@@ -138,14 +142,13 @@ public class StudentService {
 
 		Set<Parent> savedParents = new HashSet<>();
 		for (ParentDTO prtDto : dto.getParents()) {
-			Parent obj = null;
-			obj = parentRepository.findByNameAndLastName(prtDto.getName(), prtDto.getLastName());
+			Parent obj = parentRepository.findByNameAndLastName(prtDto.getName(), prtDto.getLastName());
 			if (obj == null) {
 				Parent prt = new Parent();
 				prt.setName(prtDto.getName());
 				prt.setLastName(prtDto.getLastName());
-				Parent savedPrt = parentRepository.save(prt);
-				savedParents.add(savedPrt);
+				prt = parentRepository.save(prt);
+				savedParents.add(prt);
 			} else {
 				savedParents.add(obj);
 			}
@@ -157,11 +160,22 @@ public class StudentService {
 			entity.getParents().add(parent);
 		}
 
+		Set<Phone> savedPhones = new HashSet<>();
+		for (PhoneDTO phnDto : dto.getPhones()) {
+			Optional<Phone> obj = phoneRepository.findById(phnDto.getNumber());
+			if (obj.isEmpty()) {
+				Phone phn = new Phone();
+				phn.setNumber(phnDto.getNumber());
+				phn = phoneRepository.save(phn);
+				savedPhones.add(phn);
+			} else {
+				savedPhones.add(obj.get());
+			}
+		}
+		
 		entity.getPhones().clear();
-		for (PhoneDTO phn : dto.getPhones()) {
-			Phone phone = new Phone();
-			phone.setStudent(entity);
-			phone.setNumber(phn.getNumber());
+		for (Phone phn : savedPhones) {
+			Phone phone = phoneRepository.getOne(phn.getNumber());
 			entity.getPhones().add(phone);
 		}
 	}

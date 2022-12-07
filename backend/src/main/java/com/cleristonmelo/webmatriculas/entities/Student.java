@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -27,8 +26,6 @@ import javax.persistence.Table;
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Nationality;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 
 @Entity
 @Table(name = "tb_student")
@@ -82,8 +79,12 @@ public class Student implements Serializable {
     )
 	private Set<Parent> parents = new HashSet<>();
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "student_id")
+	@ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+        name = "tb_student_phone", 
+        joinColumns = { @JoinColumn(name = "student_id") }, 
+        inverseJoinColumns = { @JoinColumn(name = "phone_id") }
+    )
 	private Set<Phone> phones = new HashSet<>();
 
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")

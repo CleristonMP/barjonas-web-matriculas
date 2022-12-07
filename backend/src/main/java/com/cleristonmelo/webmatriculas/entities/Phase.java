@@ -1,4 +1,4 @@
-package com.cleristonmelo.webmatriculas.entities.weaks;
+package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity

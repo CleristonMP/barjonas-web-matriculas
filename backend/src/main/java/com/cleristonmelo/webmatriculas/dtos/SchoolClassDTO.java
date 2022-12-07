@@ -7,10 +7,10 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.cleristonmelo.webmatriculas.entities.Phase;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.enums.Period;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phase;
 
 public class SchoolClassDTO implements Serializable {
 	private static final long serialVersionUID = 1L;

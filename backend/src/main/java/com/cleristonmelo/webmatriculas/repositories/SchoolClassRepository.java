@@ -21,4 +21,6 @@ public interface SchoolClassRepository extends JpaRepository<SchoolClass, Long> 
 
 	@Query("SELECT obj FROM SchoolClass obj JOIN FETCH obj.students")
 	SchoolClass findSchoolClassWithStudents(SchoolClass schoolClass);
+	
+	SchoolClass findByName(String name);
 }

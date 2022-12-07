@@ -27,7 +27,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	private static final String[] PUBLIC = { "/oauth/token", "/h2-console/**" };
 
-	private static final String[] OPERATOR_OR_ADMIN = { "/students/**", "/school-classes/**", "/cities/**", "/states/**" };
+	private static final String[] OPERATOR_OR_ADMIN = { "/students/**", "/school-classes/**", "/cities/**",
+			"/states/**", "/xls-file-upload/**" };
 
 	private static final String[] ADMIN = { "/users/**" };
 
@@ -46,11 +47,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 			http.headers().frameOptions().disable();
 		}
 
-		http.authorizeRequests()
-		.antMatchers(PUBLIC).permitAll()
-		.antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("OPERATOR", "ADMIN")
-		.antMatchers(ADMIN).hasRole("ADMIN")
-		.anyRequest().authenticated();
+		http.authorizeRequests().antMatchers(PUBLIC).permitAll().antMatchers(OPERATOR_OR_ADMIN)
+				.hasAnyRole("OPERATOR", "ADMIN").antMatchers(ADMIN).hasRole("ADMIN").anyRequest().authenticated();
 
 		http.cors().configurationSource(corsConfigurationSource());
 	}

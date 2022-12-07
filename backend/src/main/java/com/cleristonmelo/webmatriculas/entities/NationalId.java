@@ -1,4 +1,4 @@
-package com.cleristonmelo.webmatriculas.entities.weaks;
+package com.cleristonmelo.webmatriculas.entities;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,8 +12,6 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.cleristonmelo.webmatriculas.entities.City;
-import com.cleristonmelo.webmatriculas.entities.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity

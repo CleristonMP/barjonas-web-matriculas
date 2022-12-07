@@ -8,17 +8,16 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import com.cleristonmelo.webmatriculas.dtos.weaks.PhoneDTO;
 import com.cleristonmelo.webmatriculas.entities.Address;
 import com.cleristonmelo.webmatriculas.entities.City;
+import com.cleristonmelo.webmatriculas.entities.NationalId;
 import com.cleristonmelo.webmatriculas.entities.Parent;
+import com.cleristonmelo.webmatriculas.entities.Phone;
 import com.cleristonmelo.webmatriculas.entities.SchoolClass;
 import com.cleristonmelo.webmatriculas.entities.Student;
 import com.cleristonmelo.webmatriculas.entities.enums.Gender;
 import com.cleristonmelo.webmatriculas.entities.enums.Nationality;
 import com.cleristonmelo.webmatriculas.entities.enums.Race;
-import com.cleristonmelo.webmatriculas.entities.weaks.NationalId;
-import com.cleristonmelo.webmatriculas.entities.weaks.Phone;
 
 public class StudentDTO implements Serializable {
 	private static final long serialVersionUID = 1L;

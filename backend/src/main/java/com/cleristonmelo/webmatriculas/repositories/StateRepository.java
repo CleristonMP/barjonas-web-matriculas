@@ -8,4 +8,5 @@ import com.cleristonmelo.webmatriculas.entities.State;
 @Repository
 public interface StateRepository extends JpaRepository<State, Long> {
 
+	State findByNameLike(String name);
 }
