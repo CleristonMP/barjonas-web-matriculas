@@ -40,9 +40,8 @@ const SchoolClassesList = () => {
       params: {
         page: controlComponentsData.activePage,
         size: 6,
-        name:
-          controlComponentsData.filterData?.name ||
-          controlComponentsData.filterData?.period?.name,
+        name: controlComponentsData.filterData?.name,
+        period: controlComponentsData.filterData?.period,
       },
     };
 
@@ -57,7 +56,7 @@ const SchoolClassesList = () => {
   }, [
     controlComponentsData.activePage,
     controlComponentsData.filterData?.name,
-    controlComponentsData.filterData?.period?.name,
+    controlComponentsData.filterData?.period,
   ]);
 
   useEffect(() => {

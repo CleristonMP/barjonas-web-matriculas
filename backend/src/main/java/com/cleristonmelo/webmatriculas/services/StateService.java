@@ -3,6 +3,8 @@ package com.cleristonmelo.webmatriculas.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -30,10 +32,22 @@ public class StateService {
 	@Transactional
 	public StateDTO insert(StateDTO dto) {
 		State entity = new State();
-		entity.setName(dto.getName());
-		entity.setCountry(dto.getCountry());
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
 		return new StateDTO(entity);
+	}
+	
+	@Transactional
+	public StateDTO update(Long id, StateDTO dto) {
+		try {
+			State entity = repository.getOne(id);
+			copyDtoToEntity(dto, entity);
+			entity = repository.save(entity);
+			return new StateDTO(entity);
+		}
+		catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}
 	}
 
 	public void delete(Long id) {
@@ -46,5 +60,10 @@ public class StateService {
 		catch (DataIntegrityViolationException e) {
 			throw new DatabaseException("Integrity violation");
 		}
-	}	
+	}
+	
+	private void copyDtoToEntity(StateDTO dto, State entity) {
+		entity.setName(dto.getName());
+		entity.setCountry(dto.getCountry());
+	}
 }

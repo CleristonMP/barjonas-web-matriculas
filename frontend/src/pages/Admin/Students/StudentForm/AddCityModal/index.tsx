@@ -29,7 +29,7 @@ type Props = {
   ) => void;
 };
 
-const AddCountyModal = ({ open, setOpen, updateCounties, onClose }: Props) => {
+const AddCityModal = ({ open, setOpen, updateCounties, onClose }: Props) => {
   const [countyName, setCountyName] = useState<string>();
 
   const handleCountySubmit = () => {
@@ -41,7 +41,7 @@ const AddCountyModal = ({ open, setOpen, updateCounties, onClose }: Props) => {
 
       const config: AxiosRequestConfig = {
         method: "POST",
-        url: "/counties",
+        url: "/cities",
         data,
         withCredentials: true,
       };
@@ -74,7 +74,7 @@ const AddCountyModal = ({ open, setOpen, updateCounties, onClose }: Props) => {
       onClose={onClose}
       size="tiny"
       dimmer="inverted"
-      className="counties-modal"
+      className="cities-modal"
       closeIcon={<CloseIcon className="close-icon" />}
     >
       <Header content="Adicionar Município" />
@@ -101,4 +101,4 @@ const AddCountyModal = ({ open, setOpen, updateCounties, onClose }: Props) => {
   );
 };
 
-export default AddCountyModal;
+export default AddCityModal;

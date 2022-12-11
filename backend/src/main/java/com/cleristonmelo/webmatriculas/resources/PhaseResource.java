@@ -17,24 +17,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.cleristonmelo.webmatriculas.dtos.CityDTO;
-import com.cleristonmelo.webmatriculas.services.CityService;
+import com.cleristonmelo.webmatriculas.dtos.PhaseDTO;
+import com.cleristonmelo.webmatriculas.services.PhaseService;
 
 @RestController
-@RequestMapping(value = "/cities")
-public class CityResource {
+@RequestMapping(value = "/phases")
+public class PhaseResource {
 	
 	@Autowired
-	private CityService service;
+	private PhaseService service;
 	
 	@GetMapping
-	public ResponseEntity<List<CityDTO>> findAll() {
-		List<CityDTO> list = service.findAllPaged();
+	public ResponseEntity<List<PhaseDTO>> findAll() {
+		List<PhaseDTO> list = service.findAllPaged();
 		return ResponseEntity.ok().body(list);
 	}
 	
 	@PostMapping
-	public ResponseEntity<CityDTO> insert(@Valid @RequestBody CityDTO dto){
+	public ResponseEntity<PhaseDTO> insert(@Valid @RequestBody PhaseDTO dto){
 		dto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(dto.getId()).toUri();		
@@ -42,7 +42,7 @@ public class CityResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<CityDTO> update(@PathVariable Long id, @Valid @RequestBody CityDTO dto) {
+	public ResponseEntity<PhaseDTO> update(@PathVariable Long id, @Valid @RequestBody PhaseDTO dto) {
 		dto = service.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}

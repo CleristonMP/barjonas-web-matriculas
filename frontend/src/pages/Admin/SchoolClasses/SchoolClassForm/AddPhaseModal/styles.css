@@ -1,4 +1,4 @@
-.ui.active.counties-modal {
+.ui.active.phase-modal {
   height: auto;
   position: relative;
 }
@@ -10,7 +10,7 @@
 }
 
 @media (min-width: 576px) {
-  .ui.fullscreen.active.counties-modal {
+  .ui.fullscreen.active.phase-modal {
     width: 60vw !important;
   }
 }

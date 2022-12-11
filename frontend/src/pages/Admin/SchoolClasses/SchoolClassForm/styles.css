@@ -1,3 +1,65 @@
 .scform-ctr {
   max-width: 550px;
 }
+
+.period-select {
+  border-radius: 5px;
+  font-size: 1.15em;
+  color: var(--dark);
+  letter-spacing: 0.25em;
+  height: 50px;
+  width: 100%;
+  padding: 5px 10px;
+  border: none;
+  border-bottom: 1px solid var(--gray-light);
+  text-transform: uppercase;
+}
+
+.add-phase-btn-ctr {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+  margin: 0;
+}
+
+.add-phase-btn-ctr .add-phase-tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  background-color: var(--gray-dark);
+  color: var(--white);
+  border-radius: 6px;
+  padding: 5px;
+  z-index: 1;
+  top: -90%;
+  max-width: 58px;
+  font-size: 0.75rem;
+}
+
+.add-phase-btn-ctr:hover .add-phase-tooltip-text {
+  visibility: visible;
+}
+
+.add-phase-btn-ctr svg {
+  cursor: pointer;
+  transition: 0.25s ease-in 0.125s;
+}
+
+.add-phase-btn-ctr svg:hover {
+  transition: 0.25s ease-out 0.125s;
+  fill: var(--white);
+  stroke: var(--white);
+  background-color: var(--primary);
+  border-radius: 50%;
+}
+
+.row .separator {
+  width: 95%;
+  margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+  .add-phase-btn-ctr .add-phase-tooltip-text {
+    top: -22%;
+  }
+}

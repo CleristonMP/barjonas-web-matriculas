@@ -7,6 +7,7 @@ import { useState } from "react";
 import AppModal from "components/AppModal";
 
 import "./styles.css";
+import { getPeriodPT_BR } from "util/helpers";
 
 type Props = {
   schollClass: SchoolClass;
@@ -38,8 +39,9 @@ const SchoolClassesCrudCard = ({ schollClass, onDelete }: Props) => {
   return (
     <div className="card-body flex-sm-column">
       <Link to={schollClass.id!.toString()}>
-        <h5 className="card-title">{schollClass.name}</h5>
-        <h6 className="card-subtitle mb-3 text-muted">{`Período: ${schollClass.period}`}</h6>
+        <h5 className="card-title mb-3">{schollClass.name}</h5>
+        <h6 className="card-subtitle mb-3 text-muted">{`Período: ${getPeriodPT_BR(schollClass.period)}`}</h6>
+        <h6 className="card-subtitle mb-3 text-muted">{`Etapa: ${schollClass.phase.description}`}</h6>
       </Link>
       <div className="d-flex justify-content-center justify-content-sm-between justify-content-md-center">
         <button

@@ -85,7 +85,7 @@ const StudentsList = () => {
             page?.content.map((std) => (
               <div
                 className="card base-card std-card mb-3 mb-xl-5 col-sm-6 col-xl-4"
-                key={std.id}
+                key={std.enrollment}
               >
                 <StudentCrudCard onDelete={getStudents} student={std} />
               </div>

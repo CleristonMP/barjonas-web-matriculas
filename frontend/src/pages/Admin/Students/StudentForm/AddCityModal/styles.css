@@ -1,0 +1,16 @@
+.ui.active.cities-modal {
+  height: auto;
+  position: relative;
+}
+
+.close-icon {
+  scale: 0.5;
+  position: absolute;
+  right: 0;
+}
+
+@media (min-width: 576px) {
+  .ui.fullscreen.active.cities-modal {
+    width: 60vw !important;
+  }
+}

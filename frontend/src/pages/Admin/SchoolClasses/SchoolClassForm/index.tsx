@@ -1,15 +1,20 @@
+import { ReactComponent as AddIcon } from "assets/images/add-icon.svg";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { Period, SchoolClass } from "types/schoolClass";
-import { useEffect } from "react";
+import { SchoolClass } from "types/schoolClass";
+import { useCallback, useEffect } from "react";
 import { requestBackend } from "util/requests";
 import { AxiosRequestConfig } from "axios";
 import { history } from "util/history";
 import { useState } from "react";
-import Select from "react-select";
+import { getEnumKeys, getPeriodPT_BR } from "util/helpers";
 import { toast } from "react-toastify";
 import GoBackButton from "components/GoBackButton";
 import AppLoader from "components/AppLoader";
+import { Period } from "types/enums/period";
+import Select from "react-select";
+import { Phase } from "types/phase";
+import AddPhaseModal from "./AddPhaseModal";
 
 import "./styles.css";
 
@@ -17,25 +22,12 @@ type UrlParams = {
   schoolClassId: string;
 };
 
-const periodOptions: Period[] = [
-  { id: 1, name: "Matutino" },
-  { id: 2, name: "Vespertino" },
-  { id: 3, name: "Noturno" },
-];
-
-const getPeriodValue = (value: string) => {
-  const periods: any = {
-    Matutino: { id: 1, name: "Matutino" },
-    Vespertino: { id: 2, name: "Vespertino" },
-    Noturno: { id: 3, name: "Noturno" },
-  };
-  return periods[value];
-};
-
 const SchoolClassForm = () => {
   const { schoolClassId } = useParams<UrlParams>();
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [phases, setPhases] = useState<Phase[]>();
+  const [isOpen, setIsOpen] = useState(false);
 
   const isEditing = schoolClassId !== "create";
 
@@ -47,6 +39,19 @@ const SchoolClassForm = () => {
     control,
   } = useForm<SchoolClass>();
 
+  // Get Phases
+  const getPhases = useCallback(() => {
+    requestBackend({ url: "/phases", withCredentials: true }).then(
+      (response) => {
+        setPhases(response.data);
+      }
+    );
+  }, []);
+
+  useEffect(() => {
+    getPhases();
+  }, [getPhases]);
+
   useEffect(() => {
     if (isEditing) {
       setIsLoading(true);
@@ -57,7 +62,8 @@ const SchoolClassForm = () => {
         .then((response) => {
           const schoolClass = response.data as SchoolClass;
           setValue("name", schoolClass.name);
-          setValue("period", getPeriodValue(String(schoolClass.period)));
+          setValue("period", schoolClass.period);
+          setValue("phase", schoolClass.phase);
         })
         .finally(() => {
           setIsLoading(false);
@@ -67,11 +73,7 @@ const SchoolClassForm = () => {
 
   const onSubmit = (formData: SchoolClass) => {
     setIsProcessing(true);
-
-    const data = {
-      ...formData,
-      period: formData.period.name,
-    };
+    const data = formData;
 
     const config: AxiosRequestConfig = {
       method: isEditing ? "PUT" : "POST",
@@ -105,6 +107,7 @@ const SchoolClassForm = () => {
               </h2>
               <GoBackButton />
             </div>
+
             <div className="col-12">
               <label htmlFor="name" className="form-label">
                 Nome
@@ -122,31 +125,62 @@ const SchoolClassForm = () => {
               />
               <div className="invalid-feedback">{errors.name?.message}</div>
             </div>
+
             <div className="mt-3 col-12">
               <label htmlFor="period" className="form-label">
                 Período
               </label>
-              <Controller
-                name="period"
-                rules={{ required: "Campo obrigatório" }}
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    options={periodOptions}
-                    classNamePrefix="custom-select"
-                    getOptionLabel={(pr: Period) => pr.name}
-                    getOptionValue={(pr: Period) => String(pr.id)}
-                    inputId="period"
-                    placeholder="Escolha um período"
-                    isClearable
-                  />
-                )}
-              />
-             <span className="text-danger">{errors.period?.message}</span>
+              <select {...register("period")} className="period-select">
+                <option value="" key="" disabled selected hidden>
+                  Escolha um Período
+                </option>
+                {getEnumKeys(Period).map((key, index) => (
+                  <option value={Period[key]} key={index}>
+                    {getPeriodPT_BR(key)}
+                  </option>
+                ))}
+              </select>
+              <span className="text-danger">{errors.period?.message}</span>
             </div>
 
-            <hr className="my-4" />
+            <div className="row mt-3">
+              <div className="col-12 col-sm-10">
+                <label htmlFor="phase" className="form-label">
+                  Etapa
+                </label>
+                <Controller
+                  name="phase"
+                  rules={{ required: true }}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={phases}
+                      classNamePrefix="custom-select"
+                      getOptionLabel={(phs) => phs.description}
+                      getOptionValue={(phs) => String(phs.id)}
+                      inputId="phase"
+                      placeholder="Escolha uma Etapa"
+                      isClearable
+                    />
+                  )}
+                />
+                {errors.phase && (
+                  <div className="invalid-feedback d-block">
+                    Campo obrigatório
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => setIsOpen(true)}
+                className="mt-2 mt-sm-0 col-4 col-sm-2 add-phase-btn-ctr"
+              >
+                <span className="add-phase-tooltip-text">Adicionar Etapa</span>
+                <AddIcon />
+              </div>
+            </div>
+
+            <hr className="my-4 separator" />
 
             <div className="col-12 d-flex justify-content-between justify-content-md-around justify-content-lg-end">
               <button
@@ -165,6 +199,12 @@ const SchoolClassForm = () => {
           </div>
         </div>
       )}
+      <AddPhaseModal
+        open={isOpen}
+        setOpen={setIsOpen}
+        updatePhases={getPhases}
+        onClose={() => setIsOpen(false)}
+      />
     </form>
   );
 };

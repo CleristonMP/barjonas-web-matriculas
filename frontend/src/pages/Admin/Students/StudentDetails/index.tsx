@@ -2,17 +2,12 @@ import {
   formatCep,
   formatCpf,
   formatDate,
-  formatPhoneNumber,
 } from "util/formatters";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "util/requests";
 import { Student } from "types/student";
-import { SchoolClass } from "types/schoolClass";
-import { Address } from "types/address";
-import { Parent } from "types/parent";
-import { County } from "types/county";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { history } from "util/history";
@@ -23,78 +18,31 @@ import AppModal from "components/AppModal";
 import "./styles.css";
 
 type UrlParams = {
-  studentId: string;
+  enrollment: string;
 };
 
 const StudentDetails = () => {
-  const { studentId } = useParams<UrlParams>();
+  const { enrollment } = useParams<UrlParams>();
 
   const [student, setStudent] = useState<Student>();
-  const [schoolClass, setSchoolClass] = useState<SchoolClass>();
-  const [parent, setParent] = useState<Parent>();
-  const [address, setAddress] = useState<Address>();
-  const [county, setCounty] = useState<County>();
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   /* Get Student */
   useEffect(() => {
     const studentRequestConfig: AxiosRequestConfig = {
-      url: `/students/${studentId}`,
+      url: `/students/${enrollment}`,
       withCredentials: true,
     };
 
     setIsLoading(true);
     requestBackend(studentRequestConfig).then((studentResponse) => {
       const student = studentResponse.data as Student;
+      console.log(student);
+      
       setStudent(studentResponse.data);
-
-      /* Get School Class */
-      const schoolClassRequestConfig: AxiosRequestConfig = {
-        url: `/school-classes/${student.schoolClassId}`,
-        withCredentials: true,
-      };
-
-      requestBackend(schoolClassRequestConfig).then((schoolClassResponse) => {
-        setSchoolClass(schoolClassResponse.data);
-      });
-
-      /* Get Parent */
-      const parentRequestConfig: AxiosRequestConfig = {
-        url: `/parents/${student.parentId}`,
-        withCredentials: true,
-      };
-
-      requestBackend(parentRequestConfig).then((parentResponse) => {
-        setParent(parentResponse.data);
-      });
-
-      /* Get Address */
-      const addressRequestConfig: AxiosRequestConfig = {
-        url: `/adresses/${student.addressId}`,
-        withCredentials: true,
-      };
-
-      requestBackend(addressRequestConfig).then((addressResponse) => {
-        setAddress(addressResponse.data);
-        const address = addressResponse.data as Address;
-
-        /* Get County */
-        const countyRequestConfig: AxiosRequestConfig = {
-          url: `/counties/${address.countyId}`,
-          withCredentials: true,
-        };
-
-        requestBackend(countyRequestConfig)
-          .then((countyResponse) => {
-            setCounty(countyResponse.data);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      });
     });
-  }, [studentId]);
+  }, [enrollment]);
 
   const handleDelete = (studentId: number) => {
     setOpen(false);
@@ -147,8 +95,9 @@ const StudentDetails = () => {
             </p>
             <p className="card-text">
               <span className="fw-bold">CPF:</span>{" "}
-              {student ? formatCpf(student.cpf) : <></>}
+              {student ? formatCpf(student.socialId.toString()) : <></>}
             </p>
+            {/*
             <p className="card-text">
               <span className="fw-bold">Turma:</span>{" "}
               {schoolClass?.name + " - " + schoolClass?.period}
@@ -159,11 +108,12 @@ const StudentDetails = () => {
               <span className="fw-bold"> Telefone:</span>{" "}
               {parent ? formatPhoneNumber(parent.phone) : <></>}
             </p>
+          */}
             <p className="card-text">
-              <span className="fw-bold">Endereço:</span> {address?.publicPlace},{" "}
-              {address?.complement}, nº {address?.number}, CEP:{" "}
-              {address ? formatCep(address.zipCode.toString()) : <></>}, Bairro:{" "}
-              {address?.district}, {county?.name} - {county?.state}
+              <span className="fw-bold">Endereço:</span> {student?.address.zipCode},{" "}
+              {student?.address.complement}, nº {student?.address.number}, CEP:{" "}
+              {student ? formatCep(student.address.zipCode.toString()) : <></>}, Bairro:{" "}
+              {student?.address.district}, {student?.address.city.name} - {student?.address.city.state.name}
             </p>
             <div className="mt-4 mt-sm-5 d-flex justify-content-between justify-content-sm-around">
               <Link to={`form`} className="card-link">
@@ -189,7 +139,7 @@ const StudentDetails = () => {
         open={open}
         onClose={() => setOpen(false)}
         text="Tem certeza de que deseja excluir este aluno(a)?"
-        onConfirmation={() => handleDelete(student?.id!)}
+        onConfirmation={() => handleDelete(student?.enrollment!)}
       />
     </div>
   );

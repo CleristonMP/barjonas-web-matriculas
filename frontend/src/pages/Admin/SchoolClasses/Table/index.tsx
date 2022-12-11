@@ -70,15 +70,15 @@ const Table = () => {
             </thead>
             <tbody>
               {schoolClass?.students.map((std) => (
-                <tr key={std.id}>
+                <tr key={std.enrollment}>
                   <th scope="row">{std.enrollment}</th>
                   <td>
                     {" "}
-                    <Link to={`/admin/students/${std.id}`}> {std.name} </Link>
+                    <Link to={`/admin/students/${std.enrollment}`}> {std.name} </Link>
                   </td>
                   <td>{std.lastName}</td>
                   <td className="d-none d-sm-table-cell d-print-none">
-                    {formatCpf(std.cpf)}
+                    {formatCpf(std.socialId.toString())}
                   </td>
                   <td className="d-none d-md-table-cell d-print-none">
                     {formatDate(std.birthDate)}

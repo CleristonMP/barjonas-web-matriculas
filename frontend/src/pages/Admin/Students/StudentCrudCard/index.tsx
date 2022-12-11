@@ -46,11 +46,11 @@ const StudentCrudCard = ({ student, onDelete }: Props) => {
 
   return (
     <div className="card-body custom-card-body flex-sm-column text-sm-center">
-      <Link to={student.id!.toString()}>
+      <Link to={student.enrollment!.toString()}>
         <h5 className="card-title mb-sm-3">
           {`${student.name} ${student.lastName}`}
         </h5>
-        <h6 className="card-subtitle text-muted mb-sm-2">{`CPF: ${formatCpf(student.cpf)}`}</h6>
+        <h6 className="card-subtitle text-muted mb-sm-2">{`CPF: ${formatCpf(student.socialId.toString())}`}</h6>
       </Link>
       <p className="card-text mb-sm-3">{`Data de nascimento: ${formatDate(student.birthDate)}`}</p>
       <div className="d-flex justify-content-center">
@@ -58,7 +58,7 @@ const StudentCrudCard = ({ student, onDelete }: Props) => {
           className="btn btn-outline-danger me-4"
           onClick={() => setOpen(true)}
           >EXCLUIR</button>
-        <Link to={`${student.id}/form`}>
+        <Link to={`${student.enrollment}/form`}>
           <button className="btn btn-outline-secondary">EDITAR</button>
         </Link>
       </div>
@@ -66,7 +66,7 @@ const StudentCrudCard = ({ student, onDelete }: Props) => {
         open={open}
         onClose={() => setOpen(false)}
         text="Tem certeza de que deseja excluir este aluno(a)?"
-        onConfirmation={() => handleDelete(student.id!)}
+        onConfirmation={() => handleDelete(student.enrollment!)}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { ReactComponent as SearchIcon } from "assets/images/search_icon.svg";
-import { Controller, useForm } from "react-hook-form";
-import { Period } from "types/schoolClass";
-import Select from "react-select";
+import { useForm } from "react-hook-form";
+import { getEnumKeys } from "util/helpers";
+import { Period } from "types/enums/period";
 
 import "./styles.css";
 
@@ -10,18 +10,21 @@ export type SchoolClassFilterData = {
   period: Period | null;
 };
 
-const periodOptions: Period[] = [
-  { id: 1, name: "Matutino" },
-  { id: 2, name: "Vespertino" },
-  { id: 3, name: "Noturno" },
-];
-
 type Props = {
   onSubmitFilter: (data: SchoolClassFilterData) => void;
 };
 
+const getPeriodPT_BR = (value: string) => {
+  const periods: any = {
+    MORNING: "Matutino" ,
+    EVENING: "Vespertino",
+    NIGHT: "Noturno",
+  };
+  return periods[value];
+};
+
 const SchoolClassFilter = ({ onSubmitFilter }: Props) => {
-  const { register, handleSubmit, setValue, getValues, control } =
+  const { register, handleSubmit, setValue, getValues } =
     useForm<SchoolClassFilterData>();
 
   const onSubmit = (formData: SchoolClassFilterData) => {
@@ -31,17 +34,13 @@ const SchoolClassFilter = ({ onSubmitFilter }: Props) => {
   const handleFormClear = () => {
     setValue("name", "");
     setValue("period", null);
-    setValue("period.name", "");
   };
 
-  const handleChangePeriod = (value: Period) => {
-    setValue("period", value);
-
+  const handleChangePeriod = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const obj: SchoolClassFilterData = {
       name: getValues("name"),
-      period: getValues("period"),
+      period: Period[event.target.value as keyof typeof Period],
     };
-
     onSubmitFilter(obj);
   };
 
@@ -62,23 +61,18 @@ const SchoolClassFilter = ({ onSubmitFilter }: Props) => {
         </div>
         <div className="filter-bottom-ctr">
           <div className="filter-period-ctr">
-            <Controller
-              name="period"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  options={periodOptions}
-                  classNamePrefix="filter-select"
-                  getOptionLabel={(pr: Period) => pr.name}
-                  getOptionValue={(pr: Period) => String(pr.id)}
-                  inputId="period"
-                  placeholder="Período"
-                  isClearable
-                  onChange={(value) => handleChangePeriod(value!)}
-                />
-              )}
-            />
+            <select
+              {...register("period")}
+              onChange={handleChangePeriod}
+              className="filter-select"
+            >
+              <option value="" key="" selected>Período</option>
+              {getEnumKeys(Period).map((key, index) => (
+                <option value={Period[key]} key={index}>
+                  {getPeriodPT_BR(key)}
+                </option>
+              ))}
+            </select>
           </div>
           <button
             onClick={handleFormClear}
