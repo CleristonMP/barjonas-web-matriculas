@@ -7,7 +7,7 @@ import { requestBackend } from "util/requests";
 import { AxiosRequestConfig } from "axios";
 import { history } from "util/history";
 import { useState } from "react";
-import { getEnumKeys, getPeriodPT_BR } from "util/helpers";
+import { getEnumKeys, getPeriod_PT_BR } from "util/helpers";
 import { toast } from "react-toastify";
 import GoBackButton from "components/GoBackButton";
 import AppLoader from "components/AppLoader";
@@ -136,7 +136,7 @@ const SchoolClassForm = () => {
                 </option>
                 {getEnumKeys(Period).map((key, index) => (
                   <option value={Period[key]} key={index}>
-                    {getPeriodPT_BR(key)}
+                    {getPeriod_PT_BR(key)}
                   </option>
                 ))}
               </select>

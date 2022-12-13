@@ -1,13 +1,13 @@
-import { useParams } from "react-router-dom";
-import { SchoolClass } from "types/schoolClass";
 import { useEffect, useRef, useState } from "react";
+import { formatSocialId, formatDate } from "util/formatters";
 import { AxiosRequestConfig } from "axios";
 import { requestBackend } from "util/requests";
-import { formatCpf, formatDate } from "util/formatters";
+import { SchoolClass } from "types/schoolClass";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import PrintSchoolClassButton from "components/PrintSchoolClassButton";
 import GoBackButton from "components/GoBackButton";
 import AppLoader from "components/AppLoader";
-import PrintSchoolClassButton from "components/PrintSchoolClassButton";
 
 import "./styles.css";
 
@@ -78,7 +78,7 @@ const Table = () => {
                   </td>
                   <td>{std.lastName}</td>
                   <td className="d-none d-sm-table-cell d-print-none">
-                    {formatCpf(std.socialId.toString())}
+                    {std.socialId != null ? formatSocialId(std.socialId.toString()) : "-"}
                   </td>
                   <td className="d-none d-md-table-cell d-print-none">
                     {formatDate(std.birthDate)}

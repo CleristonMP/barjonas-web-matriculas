@@ -25,6 +25,7 @@ import Recover from "pages/Admin/Auth/Recover";
 
 const AppRoutes = () => {
   return (
+    // @ts-expect-error
     <HistoryRouter history={history}>
       <Routes>
         <Route path="/" element={<Layout />}>

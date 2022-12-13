@@ -52,7 +52,7 @@ public class StudentService {
 
 	@Autowired
 	private AddressRepository addressRepository;
-	
+
 	@Autowired
 	private PhoneRepository phoneRepository;
 
@@ -115,7 +115,9 @@ public class StudentService {
 		Address address = new Address();
 
 		if (!isEditing) {
-			entity.setBirthPlace(cityRepository.findById(dto.getBirthPlace().getId()).get());
+			if (dto.getBirthPlace() != null) {
+				entity.setBirthPlace(cityRepository.findById(dto.getBirthPlace().getId()).get());
+			}
 			nationalId.setStudent(entity);
 			address.setStudent(entity);
 		} else {
@@ -124,9 +126,11 @@ public class StudentService {
 			address = addressRepository.getOne(dto.getEnrollment());
 		}
 
-		nationalId.setNumber(dto.getNationalId().getNumber());
-		nationalId.setIssuingEntity(dto.getNationalId().getIssuingEntity());
-		nationalId.setCity(cityRepository.getOne(dto.getNationalId().getCity().getId()));
+		if (dto.getNationalId() != null) {
+			nationalId.setNumber(dto.getNationalId().getNumber());
+			nationalId.setIssuingEntity(dto.getNationalId().getIssuingEntity());
+			nationalId.setCity(cityRepository.getOne(dto.getNationalId().getCity().getId()));
+		}
 
 		entity.setNationalId(nationalId);
 
@@ -134,23 +138,29 @@ public class StudentService {
 		address.setDistrict(dto.getAddress().getDistrict());
 		address.setNumber(dto.getAddress().getNumber());
 		address.setComplement(dto.getAddress().getComplement());
-		address.setCity(cityRepository.getOne(dto.getAddress().getCity().getId()));
+		if (dto.getAddress().getCity() != null) {
+			address.setCity(cityRepository.getOne(dto.getAddress().getCity().getId()));
+		}
 
 		entity.setAddress(address);
 
-		entity.setSchoolClass(schoolClassRepository.findById(dto.getSchoolClass().getId()).get());
+		if (dto.getSchoolClass() != null) {
+			entity.setSchoolClass(schoolClassRepository.findById(dto.getSchoolClass().getId()).get());
+		}
 
 		Set<Parent> savedParents = new HashSet<>();
 		for (ParentDTO prtDto : dto.getParents()) {
-			Parent obj = parentRepository.findByNameAndLastName(prtDto.getName(), prtDto.getLastName());
-			if (obj == null) {
-				Parent prt = new Parent();
-				prt.setName(prtDto.getName());
-				prt.setLastName(prtDto.getLastName());
-				prt = parentRepository.save(prt);
-				savedParents.add(prt);
-			} else {
-				savedParents.add(obj);
+			if (prtDto != null) {
+				Parent obj = parentRepository.findByNameAndLastName(prtDto.getName(), prtDto.getLastName());
+				if (obj == null) {
+					Parent prt = new Parent();
+					prt.setName(prtDto.getName());
+					prt.setLastName(prtDto.getLastName());
+					prt = parentRepository.save(prt);
+					savedParents.add(prt);
+				} else {
+					savedParents.add(obj);
+				}
 			}
 		}
 
@@ -162,17 +172,19 @@ public class StudentService {
 
 		Set<Phone> savedPhones = new HashSet<>();
 		for (PhoneDTO phnDto : dto.getPhones()) {
-			Optional<Phone> obj = phoneRepository.findById(phnDto.getNumber());
-			if (obj.isEmpty()) {
-				Phone phn = new Phone();
-				phn.setNumber(phnDto.getNumber());
-				phn = phoneRepository.save(phn);
-				savedPhones.add(phn);
-			} else {
-				savedPhones.add(obj.get());
+			if (phnDto != null) {
+				Optional<Phone> obj = phoneRepository.findById(phnDto.getNumber());
+				if (obj.isEmpty()) {
+					Phone phn = new Phone();
+					phn.setNumber(phnDto.getNumber());
+					phn = phoneRepository.save(phn);
+					savedPhones.add(phn);
+				} else {
+					savedPhones.add(obj.get());
+				}
 			}
 		}
-		
+
 		entity.getPhones().clear();
 		for (Phone phn : savedPhones) {
 			Phone phone = phoneRepository.getOne(phn.getNumber());

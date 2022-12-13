@@ -1,11 +1,12 @@
-import { formatCpf, formatDate } from "util/formatters";
-import { requestBackend } from "util/requests";
 import { AxiosRequestConfig } from "axios";
-import AppModal from "components/AppModal";
-import { Student } from "types/student";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { requestBackend } from "util/requests";
+import { getPeriod_PT_BR } from "util/helpers";
+import { formatDate } from "util/formatters";
 import { useState } from "react";
+import { Student } from "types/student";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import AppModal from "components/AppModal";
 
 import "./styles.css";
 
@@ -46,13 +47,16 @@ const StudentCrudCard = ({ student, onDelete }: Props) => {
 
   return (
     <div className="card-body custom-card-body flex-sm-column text-sm-center">
-      <Link to={student.enrollment!.toString()}>
+      <Link to={student.enrollment.toString()}>
         <h5 className="card-title mb-sm-3">
           {`${student.name} ${student.lastName}`}
         </h5>
-        <h6 className="card-subtitle text-muted mb-sm-2">{`CPF: ${formatCpf(student.socialId.toString())}`}</h6>
+        <h6 className="card-subtitle text-muted mb-sm-2">{`Matrícula: ${student.enrollment}`}</h6>
       </Link>
-      <p className="card-text mb-sm-3">{`Data de nascimento: ${formatDate(student.birthDate)}`}</p>
+      <p className="card-text text-start mb-0">{`Data de nascimento: ${formatDate(student.birthDate)}`}</p>
+      <p className="card-text text-start mb-0">{`Turma: ${student.schoolClass.name}`}</p>
+      <p className="card-text text-start mb-0">{`Período: ${getPeriod_PT_BR(student.schoolClass.period)}`}</p>
+      <p className="card-text text-start mb-sm-3 text-capitalize">{`Etapa: ${student.schoolClass.phase.description.toLowerCase()}`}</p>
       <div className="d-flex justify-content-center">
         <button 
           className="btn btn-outline-danger me-4"
@@ -66,7 +70,7 @@ const StudentCrudCard = ({ student, onDelete }: Props) => {
         open={open}
         onClose={() => setOpen(false)}
         text="Tem certeza de que deseja excluir este aluno(a)?"
-        onConfirmation={() => handleDelete(student.enrollment!)}
+        onConfirmation={() => handleDelete(student.enrollment)}
       />
     </div>
   );

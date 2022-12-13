@@ -6,6 +6,7 @@ import { ReactComponent as SearchIcon } from "assets/images/search_icon.svg";
 import Select from "react-select";
 
 import "./styles.css";
+import { getPeriod_PT_BR } from "util/helpers";
 
 export type StudentFilterData = {
   name?: string;
@@ -80,7 +81,7 @@ const StudentFilter = ({ onSubmitFilter }: Props) => {
                   onChange={(value) =>
                     handleChangeSchoolClass(value as SchoolClass)
                   }
-                  getOptionLabel={(sc: SchoolClass) => sc.name + " - " + sc.period}
+                  getOptionLabel={(sc: SchoolClass) => sc.name + " - " + getPeriod_PT_BR(sc.period)}
                   getOptionValue={(sc: SchoolClass) => String(sc.id)}
                 />
               )}

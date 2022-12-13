@@ -9,7 +9,7 @@ export const formatDate = (date: string) => {
   return day + " / " + month + " / " + year;
 };
 
-export const formatCpf = (value: string) => {
+export const formatSocialId = (value: string) => {
   const cnpjCpf = value.replace(/\D/g, "");
 
   if (cnpjCpf.length === 11) {

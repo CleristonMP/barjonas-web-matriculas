@@ -1,6 +1,6 @@
 import { ReactComponent as SearchIcon } from "assets/images/search_icon.svg";
 import { useForm } from "react-hook-form";
-import { getEnumKeys } from "util/helpers";
+import { getEnumKeys, getPeriod_PT_BR } from "util/helpers";
 import { Period } from "types/enums/period";
 
 import "./styles.css";
@@ -12,15 +12,6 @@ export type SchoolClassFilterData = {
 
 type Props = {
   onSubmitFilter: (data: SchoolClassFilterData) => void;
-};
-
-const getPeriodPT_BR = (value: string) => {
-  const periods: any = {
-    MORNING: "Matutino" ,
-    EVENING: "Vespertino",
-    NIGHT: "Noturno",
-  };
-  return periods[value];
 };
 
 const SchoolClassFilter = ({ onSubmitFilter }: Props) => {
@@ -69,7 +60,7 @@ const SchoolClassFilter = ({ onSubmitFilter }: Props) => {
               <option value="" key="" selected>Período</option>
               {getEnumKeys(Period).map((key, index) => (
                 <option value={Period[key]} key={index}>
-                  {getPeriodPT_BR(key)}
+                  {getPeriod_PT_BR(key)}
                 </option>
               ))}
             </select>

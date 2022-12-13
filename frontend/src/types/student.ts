@@ -2,10 +2,11 @@ import { Address } from "./address";
 import { City } from "./city";
 import { NationalId } from "./nationalId";
 import { Parent } from "./parent";
+import { Phase } from "./phase";
 import { Phone } from "./phone";
 
-export type Student = {
-  enrollment?: number;
+export interface Student {
+  enrollment: number;
   name: string;
   lastName: string;
   gender: string;
@@ -21,4 +22,10 @@ export type Student = {
   address: Address;
   parents: Parent[];
   phones: Phone[];
-};
+  schoolClass: {
+    id: number;
+    name: string;
+    period: string;
+    phase: Phase;
+  };
+}

@@ -21,7 +21,7 @@ import AddCityModal from "./AddCityModal";
 import "./styles.css";
 
 type UrlParams = {
-  enrollment: string;
+  studentId: string;
 };
 
 const StudentForm = () => {
@@ -31,9 +31,9 @@ const StudentForm = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { enrollment } = useParams<UrlParams>();
+  const { studentId } = useParams<UrlParams>();
 
-  const isEditing = enrollment !== "create";
+  const isEditing = studentId !== "create";
 
   const {
     register,
@@ -43,7 +43,7 @@ const StudentForm = () => {
     control,
   } = useForm<Student>();
 
-  // Get Counties
+  // Get Cities
   const getCities = useCallback(() => {
     requestBackend({ url: "/cities", withCredentials: true }).then(
       (response) => {
@@ -65,7 +65,7 @@ const StudentForm = () => {
         
       }
     );
-  }, [schoolClasses]);
+  }, []);
 
   /*
   const handleZipCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,18 +98,23 @@ const StudentForm = () => {
   //Get Student for editing
   useEffect(() => {
     if (isEditing) {
-      // Student
       setIsLoading(true);
       requestBackend({
-        url: `/students/${enrollment}`,
+        url: `/students/${studentId}`,
         withCredentials: true,
       }).then((studentResponse) => {
         const student = studentResponse.data as Student;
         console.log(student);
+
+
+
+
+
+
         
       });
     }
-  }, [isEditing, setValue, enrollment]);
+  }, [isEditing, setValue, studentId]);
 
   const onSubmit = (formData: Student) => {
     setIsProcessing(true);
@@ -117,7 +122,7 @@ const StudentForm = () => {
 
     const config: AxiosRequestConfig = {
       method: isEditing ? "PUT" : "POST",
-      url: isEditing ? `/students/${enrollment}` : "/students",
+      url: isEditing ? `/students/${studentId}` : "/students",
       data,
       withCredentials: true,
     };
@@ -435,7 +440,7 @@ const StudentForm = () => {
             <hr className="my-4" />
 
             {/* School Class session */}
-            {/* 
+
             <div className="row g-3 p-lg-2 mt-2">
               <h2 className="form-title">Turma</h2>
               <div className="school-class-custom-ctr">
