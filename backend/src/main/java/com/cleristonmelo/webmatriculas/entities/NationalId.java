@@ -28,7 +28,7 @@ public class NationalId implements Serializable {
 	private String issuingEntity;
 
     @ManyToOne
-    @JoinColumn(name="city_id", insertable = false, updatable = false)
+    @JoinColumn(name="city_id")
 	private City city;
 	
     @OneToOne

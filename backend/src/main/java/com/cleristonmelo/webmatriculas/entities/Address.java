@@ -32,7 +32,7 @@ public class Address implements Serializable {
 	private Student student;
     
     @ManyToOne
-    @JoinColumn(name="city_id", insertable = false, updatable = false)
+    @JoinColumn(name="city_id")
     private City city;
 	
 	public Address() {
