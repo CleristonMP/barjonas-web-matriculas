@@ -200,6 +200,7 @@ max-width: 200px;
   align-items: flex-end;
   justify-content: space-between;
 }
+
 .btn-filter-clear {
   font-weight: bold !important;
   border-radius: 10px !important;
@@ -223,6 +224,18 @@ max-width: 200px;
 
 .filter-select__indicator-separator {
   display: none;
+}
+
+.enums-select {
+  border-radius: 5px;
+  font-size: 1.15em;
+  color: var(--dark);
+  letter-spacing: 0.25em;
+  height: 50px;
+  width: 100%;
+  padding: 5px 10px;
+  border: none;
+  border-bottom: 1px solid var(--gray-light);
 }
 
 @media (min-width: 576px) {

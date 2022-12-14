@@ -1,5 +1,5 @@
 import { ReactComponent as AddIcon } from "assets/images/add-icon.svg";
-import { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -13,10 +13,23 @@ import GoBackButton from "components/GoBackButton";
 import Select from "react-select";
 import {
   maskSocialIdNumber,
-  maskPhoneNumber
+  maskPhoneNumber,
+  maskZipCodeNumber,
 } from "util/maskers";
 import AppLoader from "components/AppLoader";
 import AddCityModal from "./AddCityModal";
+import {
+  getEnumKeys,
+  getGender_PT_BR,
+  getNationality_PT_BR,
+  getPeriod_PT_BR,
+  getRace_PT_BR,
+} from "util/helpers";
+import { Gender } from "types/enums/gender";
+import { Nationality } from "types/enums/nationality";
+import { Race } from "types/enums/race";
+import { ViaCep } from "types/viacep";
+import { Phone } from "types/phone";
 
 import "./styles.css";
 
@@ -30,6 +43,7 @@ const StudentForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedRadioBtn, setSelectedRadioBtn] = useState("");
 
   const { studentId } = useParams<UrlParams>();
 
@@ -47,7 +61,7 @@ const StudentForm = () => {
   const getCities = useCallback(() => {
     requestBackend({ url: "/cities", withCredentials: true }).then(
       (response) => {
-        setCities(response.data.content);
+        setCities(response.data);
       }
     );
   }, []);
@@ -61,13 +75,10 @@ const StudentForm = () => {
     requestBackend({ url: "/school-classes", withCredentials: true }).then(
       (response) => {
         setSchoolClasses(response.data.content);
-        console.log(schoolClasses);
-        
       }
     );
   }, []);
 
-  /*
   const handleZipCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = String(event.target.value).replace(/[^0-9]/g, "");
     if (value.length === 8) {
@@ -78,22 +89,19 @@ const StudentForm = () => {
         const viaCepData: ViaCep = response.data;
         setValue("address.complement", viaCepData.complemento);
         setValue(
-          "address.county",
-          counties?.reduce((obj) =>
+          "address.city",
+          cities?.reduce((obj) =>
             obj["name"] === viaCepData.localidade
               ? obj
-              : { id: 0, name: "", state: "" }
+              : { id: 0, name: "", state: { id: 0, name: "", country: "" } }
           )
         );
-        setValue("address.county.state", viaCepData.uf);
         setValue("address.complement", viaCepData.complemento);
-        setValue("address.publicPlace", viaCepData.logradouro);
         setValue("address.district", viaCepData.bairro);
       });
     }
     event.target.value = maskZipCodeNumber(event.target.value);
   };
-  */
 
   //Get Student for editing
   useEffect(() => {
@@ -104,21 +112,53 @@ const StudentForm = () => {
         withCredentials: true,
       }).then((studentResponse) => {
         const student = studentResponse.data as Student;
-        console.log(student);
-
-
-
-
-
-
-        
+        setValue("name", student.name);
+        setValue("lastName", student.lastName);
+        setValue("socialId", student.socialId);
+        setValue("birthDate", student.birthDate);
+        setValue("enrollment", student.enrollment);
+        setValue("gender", student.gender);
+        setValue("email", student.email);
+        setValue("nationality", student.nationality);
+        setValue("birthPlace", student.birthPlace);
+        setValue("nationalId", student.nationalId);
+        setValue("race", student.race);
+        setValue("disability", student.disability);
+        setValue("parents.0", student.parents[0]);
+        setValue("parents.1", student.parents[1]);
+        setValue("phones.0", student.phones[0]);
+        setValue("phones.1", student.phones[1]);
+        setValue("address", student.address);
+        setValue("schoolClass", student.schoolClass);
+        setSelectedRadioBtn(student.socialAssistance.valueOf().toString());
+        setIsLoading(false);
       });
     }
   }, [isEditing, setValue, studentId]);
 
+  const isRadioSelected = (value: string): boolean =>
+    selectedRadioBtn === value;
+
+  const handleRadioClick = (event: React.ChangeEvent<HTMLInputElement>): void =>
+    setSelectedRadioBtn(event.target.value);
+
   const onSubmit = (formData: Student) => {
     setIsProcessing(true);
-    const data = formData;
+
+    const phones: Phone[] = [];
+    formData.phones
+      .map((phn) => phn.number.toString().replace(/[^0-9]/g, ""))
+      .forEach((phn) => phones.push({ number: parseInt(phn) }));
+
+    const data = {
+      ...formData,
+      socialId: formData.socialId.toString().replace(/[^0-9]/g, ""),
+      address: {
+        ...formData.address,
+        zipCode: formData.address.zipCode.toString().replace(/[^0-9]/g, ""),
+      },
+      phones,
+    };
 
     const config: AxiosRequestConfig = {
       method: isEditing ? "PUT" : "POST",
@@ -127,14 +167,19 @@ const StudentForm = () => {
       withCredentials: true,
     };
 
-    requestBackend(config).then(() => {
-      isEditing
-        ? toast.info(
-            "As informações do aluno(a) foram atualizadas com sucesso."
-          )
-        : toast.info("Aluno(a) cadastrado com sucesso.");
-      history.push("/admin/students");
-    });
+    requestBackend(config)
+      .then(() => {
+        isEditing
+          ? toast.info(
+              "As informações do aluno(a) foram atualizadas com sucesso."
+            )
+          : toast.info("Aluno(a) cadastrado com sucesso.");
+        history.push("/admin/students");
+      })
+      .catch(() => {
+        setIsProcessing(false);
+        toast.error("Erro ao cadastrar aluno");
+      });
   };
 
   const handleCancel = () => {
@@ -193,18 +238,20 @@ const StudentForm = () => {
               </div>
 
               <div className="col-12 col-sm-6">
-                <label htmlFor="cpf" className="form-label">
+                <label htmlFor="socialId" className="form-label">
                   CPF
                 </label>
                 <div className="input-group has-validation">
                   <input
                     {...register("socialId", {
                       onChange(event) {
-                        event.target.value = maskSocialIdNumber(event.target.value);
+                        event.target.value = maskSocialIdNumber(
+                          event.target.value
+                        );
                       },
                     })}
                     type={"text"}
-                    id="cpf"
+                    id="socialId"
                     maxLength={14}
                     placeholder="Digite o CPF nome do aluno"
                     className="form-control base-input"
@@ -235,7 +282,7 @@ const StudentForm = () => {
                 </label>
                 <input
                   {...register("enrollment", {
-                    required: true,
+                    required: "Campo obrigatório",
                     onChange(event) {
                       event.target.value = event.target.value.replace(
                         /\D/g,
@@ -253,8 +300,247 @@ const StudentForm = () => {
                   maxLength={8}
                 />
                 {errors.enrollment && (
-                  <div className="invalid-feedback">Campo obrigatório.</div>
+                  <div className="invalid-feedback">
+                    {errors.enrollment.message}
+                  </div>
                 )}
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="gender" className="form-label">
+                  Gênero
+                </label>
+                <select
+                  {...register("gender", { required: true })}
+                  className={`enums-select ${
+                    errors.gender ? "border border-danger" : ""
+                  }`}
+                  id="gender"
+                >
+                  <option value="" key="" disabled selected hidden>
+                    Escolha um Gênero
+                  </option>
+                  {getEnumKeys(Gender).map((key, index) => (
+                    <option value={Gender[key]} key={index}>
+                      {getGender_PT_BR(key)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="email" className="form-label">
+                  E-mail
+                </label>
+                <input
+                  {...register("email", {
+                    pattern:
+                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                  })}
+                  type={"email"}
+                  name="email"
+                  id="email"
+                  className={`form-control base-input ${
+                    errors.email ? "is-invalid" : ""
+                  }`}
+                  placeholder="Digite o e-mail do aluno"
+                />
+                {errors.email?.type && (
+                  <div className="invalid-feedback">
+                    Digite um e-mail válido.
+                  </div>
+                )}
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="nationality" className="form-label">
+                  Nacionalidade
+                </label>
+                <select
+                  {...register("nationality", { required: true })}
+                  className={`enums-select ${
+                    errors.nationality ? "border border-danger" : ""
+                  }`}
+                  id="nationality"
+                >
+                  <option value="" key="" disabled selected hidden>
+                    Escolha uma Nacionalidade
+                  </option>
+                  {getEnumKeys(Nationality).map((key, index) => (
+                    <option value={Nationality[key]} key={index}>
+                      {getNationality_PT_BR(key)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="birthPlace" className="form-label">
+                  Local de nascimento
+                </label>
+                <Controller
+                  name="birthPlace"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={cities}
+                      classNamePrefix="custom-select"
+                      getOptionLabel={(city) =>
+                        city.name + ", " + city.state.name
+                      }
+                      getOptionValue={(city) => String(city.id)}
+                      inputId="birthPlace"
+                      placeholder="Escolha o local de nascimento"
+                      isClearable
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="socialAssistance" className="form-label">
+                  Recebe bolsa família?
+                </label>
+                <div className="d-flex justify-content-evenly">
+                  <div className="form-check mb-0 mt-3">
+                    <input
+                      {...register("socialAssistance", { required: true })}
+                      type={"radio"}
+                      name="socialAssistance"
+                      id="socialAssistance.true"
+                      value={"true"}
+                      className="form-check-input"
+                      checked={isRadioSelected("true")}
+                      onChange={handleRadioClick}
+                    />
+                    <label
+                      htmlFor="socialAssistance.true"
+                      className="form-check-label m-0"
+                    >
+                      Sim
+                    </label>
+                  </div>
+                  <div className="form-check mb-0 mt-3">
+                    <input
+                      {...register("socialAssistance", { required: true })}
+                      type={"radio"}
+                      name="socialAssistance"
+                      id="socialAssistance.false"
+                      value={"false"}
+                      className="form-check-input"
+                      checked={isRadioSelected("false")}
+                      onChange={handleRadioClick}
+                    />
+                    <label
+                      htmlFor="socialAssistance.false"
+                      className="form-check-label m-0"
+                    >
+                      Não
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border p-3 row mx-auto mt-3">
+                <div className="col-12 col-sm-6">
+                  <label htmlFor="nationalId.number" className="form-label">
+                    RG
+                  </label>
+                  <input
+                    {...register("nationalId.number", {
+                      onChange: (event) =>
+                        (event.target.value = event.target.value.replace(
+                          /[^0-9]/g,
+                          ""
+                        )),
+                    })}
+                    type={"text"}
+                    inputMode={"numeric"}
+                    name="nationalId.number"
+                    id="nationalId.number"
+                    className="form-control base-input"
+                    placeholder="Número do RG"
+                    maxLength={13}
+                  />
+                </div>
+
+                <div className="col-12 col-sm-6">
+                  <label
+                    htmlFor="nationalId.issuingEntity"
+                    className="form-label"
+                  >
+                    Órgão Emissor
+                  </label>
+                  <input
+                    {...register("nationalId.issuingEntity")}
+                    type={"text"}
+                    name="nationalId.issuingEntity"
+                    id="nationalId.issuingEntity"
+                    className="form-control base-input"
+                    placeholder="Órgão Emissor"
+                  />
+                </div>
+
+                <div className="col-12 col-sm-6 mt-3">
+                  <label htmlFor="nationalId.city" className="form-label">
+                    Cidade expedidora
+                  </label>
+                  <Controller
+                    name="nationalId.city"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={cities}
+                        classNamePrefix="custom-select"
+                        getOptionLabel={(city) =>
+                          city.name + ", " + city.state.name
+                        }
+                        getOptionValue={(city) => String(city.id)}
+                        inputId="nationalId.city"
+                        placeholder="Cidade expedidora"
+                        isClearable
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="race" className="form-label">
+                  Raça / Etnia
+                </label>
+                <select
+                  {...register("race", { required: true })}
+                  className={`enums-select ${
+                    errors.race ? "border border-danger" : ""
+                  }`}
+                  id="race"
+                >
+                  <option value="" key="" disabled selected hidden>
+                    Escolha uma Raça / etnia
+                  </option>
+                  {getEnumKeys(Race).map((key, index) => (
+                    <option value={Race[key]} key={index}>
+                      {getRace_PT_BR(key)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-12 col-sm-6">
+                <label htmlFor="disability" className="form-label">
+                  Deficiência
+                </label>
+                <input
+                  {...register("disability")}
+                  type={"text"}
+                  name="disability"
+                  id="disability"
+                  className="form-control base-input"
+                  placeholder="Deficiência"
+                />
               </div>
             </div>
 
@@ -262,57 +548,95 @@ const StudentForm = () => {
 
             {/* Parent data session */}
             <div className="row g-3 p-lg-2 mt-2">
-              <h2 className="form-title">Dados do responsável</h2>
-              <div className="col-12 col-sm-6">
-                <label htmlFor="parent.name" className="form-label">
-                  Nome
-                </label>
-                <input
-                  {...register("parents", { required: true })}
-                  type={"text"}
-                  className={`form-control base-input ${
-                    errors.parents ? "is-invalid" : ""
-                  }`}
-                  id="parent.name"
-                  placeholder="Digite o primeiro nome do responsável pelo aluno"
-                />
-                {errors.parents && (
-                  <div className="invalid-feedback">Campo obrigatório.</div>
-                )}
+              <h2 className="form-title">Dados dos responsáveis</h2>
+
+              <div className="border p-3 row mx-auto mt-3">
+                <p>Mãe</p>
+                <div className="col-12 col-sm-6">
+                  <input
+                    {...register("parents.0.name" as const, {
+                      required: true,
+                    })}
+                    type={"text"}
+                    className={`form-control base-input ${
+                      errors.parents ? "is-invalid" : ""
+                    }`}
+                    id={"parents.0.name"}
+                    placeholder="Nome"
+                  />
+                  {errors.parents && (
+                    <div className="invalid-feedback">Campo obrigatório</div>
+                  )}
+                </div>
+                <div className="col-12 col-sm-6">
+                  <input
+                    {...register("parents.0.lastName" as const, {
+                      required: true,
+                    })}
+                    type={"text"}
+                    className={`form-control base-input ${
+                      errors.parents ? "is-invalid" : ""
+                    }`}
+                    id={"parents.0.lastName"}
+                    placeholder="Sobrenome"
+                  />
+                  {errors.parents && (
+                    <div className="invalid-feedback">Campo obrigatório</div>
+                  )}
+                </div>
               </div>
 
-              <div className="col-12 col-sm-6">
-                <label htmlFor="parent.lastName" className="form-label">
-                  Sobrenome
-                </label>
-                <input
-                  {...register("parents", { required: true })}
-                  type={"text"}
-                  className={`form-control base-input ${
-                    errors.parents ? "is-invalid" : ""
-                  }`}
-                  id="parent.lastName"
-                  placeholder="Digite o(s) sobrenome(s) do responsável pelo aluno"
-                />
-                {errors.parents && (
-                  <div className="invalid-feedback">Campo obrigatório.</div>
-                )}
+              <div className="border p-3 row mx-auto mt-3">
+                <p>Pai</p>
+                <div className="col-12 col-sm-6">
+                  <input
+                    {...register("parents.1.name" as const)}
+                    type={"text"}
+                    className="form-control base-input"
+                    id={"parents.1.name"}
+                    placeholder="Nome"
+                  />
+                </div>
+                <div className="col-12 col-sm-6">
+                  <input
+                    {...register("parents.1.lastName" as const)}
+                    type={"text"}
+                    className="form-control base-input"
+                    id={"parents.1.lastName"}
+                    placeholder="Sobrenome"
+                  />
+                </div>
               </div>
+            </div>
 
+            {/* Phones session */}
+            <div className="row g-3 p-lg-2 mt-2">
+              <h2 className="form-title">Telefones</h2>
               <div className="col-12 col-sm-6">
-                <label htmlFor="phones" className="form-label">
-                  Telefone
-                </label>
                 <input
-                  {...register("phones", {
+                  {...register("phones.0.number", {
                     onChange(event) {
                       event.target.value = maskPhoneNumber(event.target.value);
                     },
                   })}
                   type={"tel"}
                   className="form-control base-input"
-                  id="phones"
+                  id={"phones.0.number"}
                   placeholder="Informe um telefone para contato"
+                  maxLength={16}
+                />
+              </div>
+              <div className="col-12 col-sm-6">
+                <input
+                  {...register("phones.1.number", {
+                    onChange(event) {
+                      event.target.value = maskPhoneNumber(event.target.value);
+                    },
+                  })}
+                  type={"tel"}
+                  className="form-control base-input"
+                  id={"phones.1.number"}
+                  placeholder="Outro telefone para contato"
                   maxLength={16}
                 />
               </div>
@@ -331,22 +655,16 @@ const StudentForm = () => {
 
                 <input
                   {...register("address.zipCode", {
-                    required: true,
-                    //onChange(event) {
-                    //  handleZipCodeChange(event);
-                    //},
+                    onChange(event) {
+                      handleZipCodeChange(event);
+                    },
                   })}
                   type={"text"}
-                  className={`form-control base-input ${
-                    errors.address?.zipCode ? "is-invalid" : ""
-                  }`}
+                  className="form-control base-input"
                   id="address.zipCode"
-                  placeholder="65.000-000"
+                  placeholder="Digite o CEP"
                   maxLength={10}
                 />
-                {errors.address?.zipCode && (
-                  <div className="invalid-feedback">Campo obrigatório.</div>
-                )}
               </div>
 
               <div className="col-12 col-sm-4">
@@ -354,17 +672,12 @@ const StudentForm = () => {
                   Bairro
                 </label>
                 <input
-                  {...register("address.district", { required: true })}
+                  {...register("address.district")}
                   type={"text"}
-                  className={`form-control base-input ${
-                    errors.address?.district ? "is-invalid" : ""
-                  }`}
+                  className="form-control base-input"
                   id="address.district"
-                  placeholder="Cohatrac, Trizidela..."
+                  placeholder="Digite o Bairro"
                 />
-                {errors.address?.district && (
-                  <div className="invalid-feedback">Campo obrigatório.</div>
-                )}
               </div>
 
               <div className="col-12 col-sm-4">
@@ -372,17 +685,12 @@ const StudentForm = () => {
                   Número
                 </label>
                 <input
-                  {...register("address.number", { required: true })}
+                  {...register("address.number")}
                   type={"text"}
-                  className={`form-control base-input ${
-                    errors.address?.number ? "is-invalid" : ""
-                  }`}
+                  className="form-control base-input"
                   id="address.number"
                   placeholder="Nº ..."
                 />
-                {errors.address?.number && (
-                  <div className="invalid-feedback">Campo obrigatório.</div>
-                )}
               </div>
 
               <div className="col-12 col-sm-4">
@@ -399,31 +707,25 @@ const StudentForm = () => {
               </div>
 
               <div className="col-12 col-sm-4">
-                <label htmlFor="address.county" className="form-label">
+                <label htmlFor="address.city" className="form-label">
                   Município
                 </label>
                 <Controller
                   name="address.city"
-                  rules={{ required: true }}
                   control={control}
                   render={({ field }) => (
                     <Select
                       {...field}
                       options={cities}
                       classNamePrefix="custom-select"
-                      getOptionLabel={(county) => county.name}
-                      getOptionValue={(county) => String(county.id)}
-                      inputId="address.county"
+                      getOptionLabel={(city) => city.name}
+                      getOptionValue={(city) => String(city.id)}
+                      inputId="address.city"
                       placeholder="Município"
                       isClearable
                     />
                   )}
                 />
-                {errors.address?.city && (
-                  <div className="invalid-feedback d-block">
-                    Campo obrigatório
-                  </div>
-                )}
               </div>
 
               <div
@@ -456,8 +758,10 @@ const StudentForm = () => {
                       {...field}
                       options={schoolClasses}
                       classNamePrefix="custom-select"
-                      getOptionLabel={(sc) => sc.name + " - " + sc.period}
-                      getOptionValue={(sc) => String(sc.id!)}
+                      getOptionLabel={(sc) =>
+                        sc.name + " - " + getPeriod_PT_BR(sc.period)
+                      }
+                      getOptionValue={(sc) => String(sc.id)}
                       inputId="schoolClass"
                       placeholder="Turma"
                     />
@@ -465,12 +769,12 @@ const StudentForm = () => {
                 />
                 {errors.schoolClass && (
                   <div className="invalid-feedback d-block">
-                    Campo obrigatório
+                    Campo obrigatório. Escolha uma turma.
                   </div>
                 )}
               </div>
             </div>
-*/}
+
             <hr className="my-4" />
 
             {/* Buttons */}

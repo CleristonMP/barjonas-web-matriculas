@@ -1,5 +1,5 @@
 export type Parent = {
-  id: number;
+  id?: number;
   name: string;
   lastName: string;
 };

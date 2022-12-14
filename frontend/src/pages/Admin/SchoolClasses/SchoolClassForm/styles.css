@@ -2,19 +2,6 @@
   max-width: 550px;
 }
 
-.period-select {
-  border-radius: 5px;
-  font-size: 1.15em;
-  color: var(--dark);
-  letter-spacing: 0.25em;
-  height: 50px;
-  width: 100%;
-  padding: 5px 10px;
-  border: none;
-  border-bottom: 1px solid var(--gray-light);
-  text-transform: uppercase;
-}
-
 .add-phase-btn-ctr {
   position: relative;
   display: flex;

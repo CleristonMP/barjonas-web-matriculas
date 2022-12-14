@@ -134,9 +134,9 @@ const StudentDetails = () => {
                     ", " +
                     student.nationalId.issuingEntity +
                     ", " +
-                    student.nationalId.city +
+                    student.nationalId.city.name +
                     ", " +
-                    student.nationalId.city.state}
+                    student.nationalId.city.state.name}
                 </span>
               ) : student?.nationalId.number &&
                 student.nationalId.issuingEntity ? (

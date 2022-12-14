@@ -130,7 +130,7 @@ const SchoolClassForm = () => {
               <label htmlFor="period" className="form-label">
                 Período
               </label>
-              <select {...register("period")} className="period-select">
+              <select {...register("period")} className="enums-select">
                 <option value="" key="" disabled selected hidden>
                   Escolha um Período
                 </option>
